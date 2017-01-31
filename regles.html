@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title> Jeu: Memory </title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src = "bdd.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bdd.css">
+  </head>
+
+  <body>
+    <div id = "base">
+      <h1 class = "centrer"> Memory </h1>
+      <img src = "memory.jpg" width = 400>
+
+      <h3><audio  src="dll.mp3" controls loop</audio> </h3>
+        <!-- code du menu -->
+        <nav>
+        	<ul class="top-menu">
+        		<li><a href="bdd.html">Accueil</a><div class="menu-item" id="item1"></div></li>
+        		<li><a href="regles.html">Regles</a><div class="menu-item" id="item2"></div></li>
+        		<li><a href="classement.html">Classement</a><div class="menu-item" id="item3"></div></li>
+        		<li><a href="contact.html">Contact</a><div class="menu-item" id="item4"></div></li>
+        	</ul>
+        </nav>
+      <h2>Les règles</h2>
+      <p>
+      Pour débuter la partie, déposer toutes les cartes mélangées face contre table de façon à ce que les images ne soient pas visibles.
+      Le premier joueur découvre 2 cartes, si elles sont identiques, il les remporte sinon il les cache à nouveau.
+      C'est ensuite au joueur suivant de retourner 2 cartes et ainsi de suite...
+      Le but étant de tenter de mémoriser l'emplacement des différentes cartes afin de retourner successivement les 2 cartes identiques formant la paire pour les remporter.
+      Quand le joueur remporte une paire, cela lui donne le droit de rejouer.
+      La partie est terminée quand toutes les paires ont été trouvées.
+      Le joueur qui a remporté le plus de cartes a gagné la partie.
+      </p>
+    </div>
+  </body>
+</html>
