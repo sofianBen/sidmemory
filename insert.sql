@@ -1,4 +1,17 @@
-# INSERT TABLE NIVEAU
+-- INSERT TABLE Joueur
+create SEQUENCE seq_joueur;
+Insert into Joueur values (seq_joueur.NEXTVAL,'zouzou','abc@gmail.com','sid',50,2);
+Insert into Joueur values (seq_joueur.NEXTVAL,'bibi','bibi@gmail.com','alcool',110,3);
+
+-- INSERT TABLE Collection
+
+Insert into Collection values (1);
+Insert into Collection values (2);
+Insert into Collection values (3);
+Insert into Collection values (4);
+Insert into Collection values (5);
+
+-- INSERT TABLE NIVEAU
 
 Insert into Niveau values (1,0,20,3,3,1);
 Insert into Niveau values (2,10,20,3,4,1);
@@ -51,7 +64,9 @@ Insert into Niveau values (48,470,20,7,7,5);
 Insert into Niveau values (49,480,20,7,8,5);
 Insert into Niveau values (50,490,20,8,8,5);
 
-# INSERT TABLE NIVEAU
-
-Insert into Joueur values (1,'zouzou','abc@gmail.com','sid',50,2);
-Insert into Joueur values (2,'bibi','bibi@gmail.com','',3,1);
+-- INSERT TABLE Image
+create SEQUENCE seq_image;
+Insert into Joueur values (seq_image.NEXTVAL,1,1);
+Insert into Joueur values (seq_image.NEXTVAL,2,1);
+Insert into Joueur values (seq_image.NEXTVAL,3,1);
+Insert into Joueur values (seq_image.NEXTVAL,3,1);
