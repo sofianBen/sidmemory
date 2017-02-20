@@ -26,9 +26,8 @@ CREATE TABLE Categorie
 -------------------------------
 CREATE TABLE Joueur
   (
-    id_joueur    NUMBER CONSTRAINT pk_joueur PRIMARY KEY,
-    nom          VARCHAR2(25 CHAR) CONSTRAINT nn_joueur_nom NOT NULL,
-    prenom       VARCHAR2(25 CHAR) CONSTRAINT nn_joueur_prenom NOT NULL,
+    id_joueur    NUMBER CONSTRAINT pk_joueur PRIMARY KEY
+    pseudo       VARCHAR2(40 CHAR) CONSTRAINT nn_joueur_prenom NOT NULL,
     mail         VARCHAR2(60 CHAR) CONSTRAINT nn_joueur_mail NOT NULL,
     mdp          VARCHAR2(50 CHAR) CONSTRAINT nn_joueur_mdp NOT NULL,
     xp           NUMBER DEFAULT 0 CONSTRAINT nn_joueur_xp NOT NULL,
