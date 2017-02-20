@@ -16,15 +16,9 @@
 
       <h3><audio  src="dll.mp3" controls loop</audio> </h3>
         <!-- code du menu -->
-        <nav>
-        	<ul class="top-menu">
-        		<li><a href="index.html">Accueil</a><div class="menu-item" id="item1"></div></li>
-        		<li><a href="regles.html">Regles</a><div class="menu-item" id="item2"></div></li>
-        		<li><a href="classement.html">Classement</a><div class="menu-item" id="item3"></div></li>
-        		<li><a href="contact.html">Contact</a><div class="menu-item" id="item4"></div></li>
-        	</ul>
-        </nav>
-
+      <div id= "menu">
+         <?php include("menus.php"); ?>
+      </div>
       <div id = "milieu" class = "centrer">
         <div id = "centre">
           <p class = "centrer"><strong>Créateurs</strong>: Céline, Claire, Camille et Sofian</p>
