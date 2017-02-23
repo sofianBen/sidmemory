@@ -1,26 +1,50 @@
+SET SERVEROUTPUT ON;
 
-# adresse mail + identifiant non unique
+--------------------------------------------------------------------------------------------------------------
+-- inscription (adresse mail + identifiant non unique)
+--------------------------------------------------------------------------------------------------------------
 
-Create or replace procedure inscription (pid_joueur Joueur.id_joueur %TYPE,
-  pnom Joueur.nom %TYPE,
-  pprenom Joueur.prenom %TYPE,
-  pmail Joueur.mail %TYPE,
-  pmdp Joueur.mdp %TYPE,) AS
-  vid_joueur Joueur.id_joueur %TYPE;
-  vmail Joueur.mail %TYPE;
-  identifiant_nn_unique EXCEPTION;
-  mail_nn_unique EXCEPTION;
+create or replace procedure inscription(
+    pPseudo in Joueur.pseudo%TYPE,
+    pMail in Joueur.mail%TYPE,
+    pMdp in Joueur.mdp%TYPE,
+    retour out number) AS
+
+  e_mail_un EXCEPTION;
+  pragma exception_init (e_mail_un, -0001);
+  e_mail_ck EXCEPTION;
+  pragma exception_init (e_mail_ck, -2290);
+  
 BEGIN
-Select id_joueur, id_mail into vid_joueur,vmail FROM Joueur
-if (pid_joueur=vid_joueur) then raise identifiant_nn_unique;
-if (pmail=vmail) then raise mail_nn_unique;
-COMMIT;
+  insert into Joueur(id_joueur, pseudo, mail, mdp) values(seq_joueur.nextval, pPseudo, pMail, pMdp);
+  COMMIT;
+  retour := 0;
 EXCEPTION
-  when identifiant_nn_unique then
-    dbms_output.line("L'identifiant saisie existe déja, essayer un autre identifiant")
-  when mail_nn_unique then
-    dbms_output.line("Le mail saisie existe déja, saisissez un autre mail svp")
+  when e_mail_un then
+    dbms_output.put_line('L''adresse mail "' || pMail || '" est déjà utilisée, veulliez en choisir une autre.');
+    retour := 1;
+  when e_mail_ck then
+    dbms_output.put_line('L''adresse mail "' || pMail || '" est invalide, veuillez la corriger.');
+    retour := 2;
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    retour := 9; 
 END;
+/
+
+-- test
+declare
+  retour number;
+begin 
+  inscription('pablo', 'pablo@mail.com', 'mdp', retour);
+  dbms_output.put_line(retour);
+end ;
+/
+
+select * from Joueur order by 1;
+
+
+
 
 # adresse mail incorect
 Select mail int vmail FROM Joueur where id_joueur=pid_joueur
