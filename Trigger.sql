@@ -139,6 +139,44 @@ end ;
 
 
 
+--------------------------------------------------------------------------------------------------------------
+-- creationPartie  *** PAS FINIT ***
+--------------------------------------------------------------------------------------------------------------
+
+create or replace procedure creationPartie(
+    pId_niveau in Niveau.id_niveau%type,
+    pId_joueur in Joueur.id_joueur%TYPE,
+    pId_joueur2 in Joueur.id_joueur%TYPE,
+    retour out number) AS
+  
+BEGIN
+  -- Tester ici si le/s joueur/s a pas perdu 5 parties dans l'heure précédente
+  -- Ca bloquera directement la création partie
+  
+  insert into Partie values(seq_partie.nextval, pId_niveau, pId_joueur2,  pId_niveau);
+  retour := 0;
+  
+EXCEPTION
+  when 
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    retour := -1; 
+END;
+/
+
+-- test
+declare
+  retour number;
+begin 
+  creationPartie(1, '', 1, retour);
+  dbms_output.put_line(retour);
+end ;
+/
+
+select * from partie order by 1;
+
+
+
 
 
 
