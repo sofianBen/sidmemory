@@ -1,7 +1,7 @@
 SET SERVEROUTPUT ON;
 
 --------------------------------------------------------------------------------------------------------------
--- inscription (adresse mail + identifiant non unique)
+-- inscription (adresse mail check + identifiant unique)
 --------------------------------------------------------------------------------------------------------------
 
 create or replace procedure inscription(
@@ -18,7 +18,9 @@ create or replace procedure inscription(
 BEGIN
   insert into Joueur(id_joueur, pseudo, mail, mdp) values(seq_joueur.nextval, pPseudo, pMail, pMdp);
   COMMIT;
+  dbms_output.put_line('Inscription réussie.');
   retour := 0;
+  
 EXCEPTION
   when e_mail_un then
     dbms_output.put_line('L''adresse mail "' || pMail || '" est déjà utilisée, veulliez en choisir une autre.');
@@ -36,12 +38,63 @@ END;
 declare
   retour number;
 begin 
-  inscription('pablo', 'pablo@mail.com', 'mdp', retour);
+  inscription('zouzou', 'abc@gmail.com', 'sid', retour);
   dbms_output.put_line(retour);
 end ;
 /
 
 select * from Joueur order by 1;
+
+
+
+--------------------------------------------------------------------------------------------------------------
+-- connexion (adresse mail + mdp)
+--------------------------------------------------------------------------------------------------------------
+
+create or replace procedure connexion(
+    pMail in Joueur.mail%TYPE,
+    pMdp in Joueur.mdp%TYPE,
+    retour out number) AS
+
+  vNbCompte number;
+  vNbMail number;
+  
+BEGIN
+  select count(*) into vNbCompte from Joueur 
+  where mail = pMail
+  and mdp = pMdp;
+
+  if vNbCompte = 1 then
+    dbms_output.put_line('Connexion autorisée.');
+    retour := 0;
+  else
+    select count(*) into vNbMail from Joueur
+    where mail = pMail;
+    
+    if vNbMail = 1 then
+      dbms_output.put_line('Connexion non autorisée : Mot de passe invalide.');
+      retour := 1;
+    else
+      dbms_output.put_line('Connexion non autorisée : "' || pMail || '" est une adresse mail inconnue.');
+      retour := 2;
+    end if;
+  end if;
+  
+EXCEPTION
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    retour := 9; 
+END;
+/
+
+-- test
+declare
+  retour number;
+begin 
+  connexion('abc@gmail.com', 'sid', retour);
+  dbms_output.put_line(retour);
+end ;
+/
 
 
 
