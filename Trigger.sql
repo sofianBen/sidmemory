@@ -30,7 +30,7 @@ EXCEPTION
     retour := 2;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-    retour := 9; 
+    retour := -1; 
 END;
 /
 
@@ -83,7 +83,7 @@ BEGIN
 EXCEPTION
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-    retour := 9; 
+    retour := -1; 
 END;
 /
 
@@ -95,6 +95,49 @@ begin
   dbms_output.put_line(retour);
 end ;
 /
+
+
+
+--------------------------------------------------------------------------------------------------------------
+-- afficherNiveaux
+--------------------------------------------------------------------------------------------------------------
+
+create or replace function niveauJoueur(
+    pId_joueur in Joueur.id_joueur%type)
+    return number AS
+
+  vXp Joueur.xp%type;
+  vNiveau Niveau.id_niveau%type;
+  
+BEGIN
+  select xp into vXp
+  from joueur
+  where id_joueur = pId_joueur;
+  
+  select max(id_niveau) into vNiveau
+  from niveau
+  where xp_requis <= vXp;
+  
+  dbms_output.put_line('Le joueur ' || pId_joueur || ' peut jouer jusqu''au niveau ' || vNiveau || '.');
+  return vNiveau;
+
+EXCEPTION
+  when NO_DATA_FOUND then
+    dbms_output.put_line(pId_joueur || ' n''est pas un identifiant de joueur.');
+    return -1;
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    return -1; 
+END;
+/
+
+-- test
+begin 
+  dbms_output.put_line(niveauJoueur(2));
+end ;
+/
+
+
 
 
 
