@@ -34,6 +34,7 @@ CREATE TABLE Joueur
     id_categorie NUMBER DEFAULT 1 CONSTRAINT nn_joueur_id_categorie NOT NULL,
 
     CONSTRAINT fk_joueur_categorie FOREIGN KEY(id_categorie) REFERENCES Categorie,
+    CONSTRAINT un_joueur_pseudo UNIQUE(pseudo),
     CONSTRAINT ck_joueur_mail CHECK(mail LIKE '%@%.%'),
     CONSTRAINT un_joueur_mail UNIQUE(mail)
   );
