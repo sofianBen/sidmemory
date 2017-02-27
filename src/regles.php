@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+
+<?php
+include("db/connect.php");
+?>
 <html>
   <head>
     <title> Jeu: Memory </title>
@@ -12,11 +17,9 @@
   <body>
     <div id = "base">
       <h1 class = "centrer"> Memory </h1>
-      <img src = "memory.jpg" width = 400>
 
-      <h3><audio  src="dll.mp3" controls loop</audio> </h3>
         <!-- code du menu -->
-        <?php include("menus.php"); ?>
+        <?php include("menu.php"); ?>
       <h2>Les règles</h2>
       <p>
       Pour débuter la partie, déposer toutes les cartes mélangées face contre table de façon à ce que les images ne soient pas visibles.
