@@ -1,8 +1,21 @@
 <!DOCTYPE html>
 
 <?php
+session_start();
+
 include("db/connect.php");
+
+$strSQL = "select * FROM joueur";
+
+$stmt = oci_parse($dbConn,$strSQL);
+if ( ! oci_execute($stmt) ){
+$err = oci_error($stmt);
+trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
+};
+
+
 ?>
+
 <html>
   <head>
     <title> Jeu: Memory </title>
@@ -18,8 +31,18 @@ include("db/connect.php");
     <div id = "base">
       <h1 class = "centrer"> Memory </h1>
 
-        <!-- code du menu -->
-        <?php include("menu.php"); ?>
+      <div id= "menu">
+        <nav>
+          <ul class="top-menu">
+            <li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
+            <li><a href="jouer.php">Jouer</a><div class="menu-item" id="item2"></div></li>
+            <li><a href="regles.php">Regles</a><div class="menu-item" id="item3"></div></li>
+            <li><a href="classement.php">Classement</a><div class="menu-item" id="item4"></div></li>
+            <li><a href="deconnexion.php">Se deconnecter</a><div class="menu-item" id="item5"></div></li>
+          </ul>
+        </nav>
+      </div>
+
       <h2>Les règles</h2>
       <p>
       Pour débuter la partie, déposer toutes les cartes mélangées face contre table de façon à ce que les images ne soient pas visibles.

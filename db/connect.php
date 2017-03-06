@@ -1,4 +1,5 @@
-<?php 
+<!DOCTYPE html>
+<?php
 
 $dbHost = "ntelline.cict.fr";
 $dbHostPort="1522";
