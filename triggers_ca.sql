@@ -81,6 +81,11 @@ BEGIN
     end if;
   end if;
   
+EXCEPTION
+  when NO_DATA_FOUND then
+    dbms_output.put_line(pid_partie || ' n''est pas un identifiant de partie.');
+    return null;
+  
 END;
 /
 
