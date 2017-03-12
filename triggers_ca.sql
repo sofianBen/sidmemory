@@ -89,6 +89,97 @@ EXCEPTION
 END;
 /
 
+
+
+
+--------------------------------------------------------------------------------------------------------------
+-- verification_defaites
+--------------------------------------------------------------------------------------------------------------
+
+create or replace function verification_defaites(
+    pId_joueur in Joueur.id_joueur%type)
+    return number as
+    
+  compteur number := 0;
+
+BEGIN
+  for cPartie in(
+      select p.id_partie 
+      from partie p, coup c
+      where p.id_partie = c.id_partie 
+      and c.id_joueur = pId_joueur
+      and heure > current_timestamp - interval '1' HOUR) loop
+    if ((partie_resultat(cPartie.id_partie) <>  id_joueur_en_pseudo(pId_joueur)) or (partie_resultat(cPartie.id_partie) <>  'Egalité')) then
+      compteur := compteur + 1;
+    end if;
+  end loop;
+  
+  if compteur >= 5 then 
+    RAISE_APPLICATION_ERROR(-20001, 'Le joueur ' || id_joueur_en_pseudo(pId_joueur) || ' a perdu 5 partie dans la dernière heure');
+  end if;
+  
+  return 0;
+  
+EXCEPTION
+  when NO_DATA_FOUND then
+    dbms_output.put_line(pid_joueur || ' n''est pas un identifiant de joueur.');
+    return -1;
+END;
+/
+
+-- test
+begin 
+  dbms_output.put_line(verification_defaites(1)); -- rajouter des valeurs dans les tables
+end ;
+/
+
+
+--------------------------------------------------------------------------------------------------------------
+-- creationPartie  *** PAS FINIT ***
+--------------------------------------------------------------------------------------------------------------
+
+create or replace procedure creationPartie(
+    pId_niveau in Niveau.id_niveau%type,
+    pId_joueur in Joueur.id_joueur%TYPE,
+    pId_joueur2 in Joueur.id_joueur%TYPE,
+    retour out number) AS
+  
+BEGIN
+
+  if (verification_defaites(pId_joueur)) = 0) then
+    if (pId_joueur2 is not null) then
+      if (verification_defaites(pId_joueur2)) = 0) then
+        insert into Partie values(seq_partie.nextval, pId_niveau, pId_joueur, pId_joueur2);
+        retour := 0;
+      else 
+        dbms_output.put_line('Le joueur ' || id_joueur_en_pseudo(pId_joueur2) || ' a perdu 5 partie dans la dernière heure');
+        retour := 2;
+      end if;
+    else
+      insert into Partie values(seq_partie.nextval, pId_niveau, pId_joueur, null);
+      retour := 0;
+    end if;
+  else
+    dbms_output.put_line('Le joueur ' || id_joueur_en_pseudo(pId_joueur2) || ' a perdu 5 partie dans la dernière heure');
+    retour := 1;
+  end if;
+  
+EXCEPTION -- à compléter
+  --when 
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    retour := -1; 
+END;
+/
+
+-- test
+declare
+  retour number;
+begin 
+  creationPartie(1, '', 1, retour);
+  dbms_output.put_line(retour);
+end ;
+/
 -- test
 begin 
   --select * from partie order by 1;
