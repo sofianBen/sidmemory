@@ -4,6 +4,7 @@ DROP SEQUENCE seq_partie;
 DROP SEQUENCE seq_carte;
 DROP SEQUENCE seq_coup;
 
+
 -- Insert Categorie
 INSERT INTO Categorie VALUES (1, 'débutant', 0, 49);
 INSERT INTO Categorie VALUES (2, 'novice', 50, 99);
@@ -16,10 +17,12 @@ INSERT INTO Categorie VALUES (8, 'expert', 350, 399);
 INSERT INTO Categorie VALUES (9, 'maître', 400, 449);
 INSERT INTO Categorie VALUES (10, 'élite', 450, 99999);
 
+
 -- Insert Joueur
 CREATE SEQUENCE seq_joueur;
 INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'zouzou','abc@gmail.com','sid',0,1);
 INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'bibi','bibi@gmail.com','alcool',110,3);
+
 
 -- Insert Collection
 INSERT INTO Collection VALUES (1);
@@ -27,6 +30,7 @@ INSERT INTO Collection VALUES (2);
 INSERT INTO Collection VALUES (3);
 INSERT INTO Collection VALUES (4);
 INSERT INTO Collection VALUES (5);
+
 
 -- Insert Niveau
 INSERT INTO Niveau VALUES (1,0,INTERVAL '20' SECOND,3,3,1);
@@ -82,19 +86,198 @@ INSERT INTO Niveau VALUES (50,490,INTERVAL '20' SECOND,8,8,5);
 
 -- Insert Image
 CREATE SEQUENCE seq_image;
-INSERT INTO Image VALUES (seq_image.NEXTVAL,'lien A',1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL,'lien B',1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL,'lien C',1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL,'lien D',1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL,'lien 1',2);
-INSERT INTO Image VALUES (seq_image.NEXTVAL,'lien 2',2);
-INSERT INTO Image VALUES (seq_image.NEXTVAL,'lien 3',2);
-INSERT INTO Image VALUES (seq_image.NEXTVAL,'lien 4',2);
+--find . | sed 's/[^/]*\//|   /g;s/| *\([^| ]\)/\1/'
+-- Collection 1
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/bleu rond.png', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert.png', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/noir.png', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rouge.png', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert claire.png       ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert rond.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/violet.png            ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rouge rond.png        ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/bleu.png              ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond marron.png       ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/orange.png            ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond rouge.png        ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond vert claire.png  ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond vert.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/gris.png              ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/jaune.png             ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/marron.png            ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond bleu.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/turquoise.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond rose.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond violet.png       ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/jaune rond.png        ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/blanc.png             ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond turquois.png     ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond gris.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert clair rond.png   ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond orange.png       ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond noir.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/turquoise rond.png    ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rose.png              ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond jaune.png        ', 1);
+
+--Collection2
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/034.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/022.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/054.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/010.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/068.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/027.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/053.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/019.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/021.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/020.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/009.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/011.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/014.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/046.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/015.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/049.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/043.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/016.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/013.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/031.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/006.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/038.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/037.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/052.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/048.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/045.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/028.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/060.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/051.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/012.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/047.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/050.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/055.png', 2);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/044.png', 2);
+
+--Collection3
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/094.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/040.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/003.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/025.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/067.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/063.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/042.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/064.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/008.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/159.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/041.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/059.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/098.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/032.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/026.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/029.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/017.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/087.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/039.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/099.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/061.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/089.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/030.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/062.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/057.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/005.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/002.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/058.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/056.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/088.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/066.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/018.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/001.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/086.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/035.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/007.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/036.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/023.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/033.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/004.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/160.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/024.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/158.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/093.png', 3);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection3/065.png', 3);
+
+--Collection4
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Yemen.svg.png', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_England.svg.png              ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/120px-Flag_of_Slovenia.svg.png       ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Ghana.svg.png                ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Russia.svg.png               ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Andorra.svg.png              ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/120px-Flag_of_Syria.svg.png          ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/120px-Flag_of_Luxembourg.svg.png     ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Italy.svg.png                ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Moldova.svg.png              ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_the_United_States.svg.png    ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Ireland.svg.png              ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Mali.svg.png                 ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Guinea.svg.png               ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Palestine.svg.png            ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Senegal.svg.png              ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_New_Zealand.svg.png          ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Mexico.svg.png               ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Iceland.svg.png              ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_the_Netherlands.svg.png      ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Jordan.svg.png               ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Iraq.svg.png                 ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Sudan.svg.png                ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/120px-Flag_of_Bolivia.svg.png        ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Côte_d''Ivoire.svg.png        ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Australia_(converted).svg.png', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Slovakia.svg.png             ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Puerto_Rico.svg.png          ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Norway.svg.png               ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Cuba.svg.png                 ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_France.svg.png               ', 4);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection4/Flag_of_Egypt.svg.png                ', 4);
+
+--Collection5
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/010.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/011.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/026.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/032.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/013.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/009.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/001.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/019.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/015.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/005.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/031.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/023.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/003.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/020.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/3é.jpeg ', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/014.jpg ', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/004.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/006.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/002.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/007.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/30.jpeg ', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/024.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/018.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/29.jpeg ', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/022.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/016.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/017.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/012.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/027.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/025.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/021.jpeg', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/28.jpeg ', 5);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection5/008.jpeg', 5);
+
 
 -- Insert Partie
 CREATE SEQUENCE seq_partie;
 INSERT INTO Partie(id_partie, id_niveau, id_joueur) VALUES (seq_partie.NEXTVAL, 1, 1);
 INSERT INTO Partie VALUES (seq_partie.NEXTVAL, 2, 1, 2);
+
 
 -- Insert Carte 
 CREATE SEQUENCE seq_carte;
