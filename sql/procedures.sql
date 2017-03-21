@@ -50,12 +50,12 @@ create or replace procedure inscription(
 BEGIN
   insert into Joueur(id_joueur, pseudo, mail, mdp) values(seq_joueur.nextval, pPseudo, pMail, pMdp);
   COMMIT;
-  dbms_output.put_line('Inscription réussie.');
+  dbms_output.put_line('Inscription rÃ©ussie.');
   retour := 0;
   
 EXCEPTION
   when e_mail_un then
-    dbms_output.put_line('L''adresse mail "' || pMail || '" est déjà utilisée, veulliez en choisir une autre.');
+    dbms_output.put_line('L''adresse mail "' || pMail || '" est dÃ©jÃ  utilisÃ©e, veulliez en choisir une autre.');
     retour := 1;
   when e_mail_ck then
     dbms_output.put_line('L''adresse mail "' || pMail || '" est invalide, veuillez la corriger.');
@@ -96,17 +96,17 @@ BEGIN
   and mdp = pMdp;
 
   if vNbCompte = 1 then
-    dbms_output.put_line('Connexion autorisée.');
+    dbms_output.put_line('Connexion autorisÃ©e.');
     retour := 0;
   else
     select count(*) into vNbMail from Joueur
     where mail = pMail;
     
     if vNbMail = 1 then
-      dbms_output.put_line('Connexion non autorisée : Mot de passe invalide.');
+      dbms_output.put_line('Connexion non autorisÃ©e : Mot de passe invalide.');
       retour := 1;
     else
-      dbms_output.put_line('Connexion non autorisée : "' || pMail || '" est une adresse mail inconnue.');
+      dbms_output.put_line('Connexion non autorisÃ©e : "' || pMail || '" est une adresse mail inconnue.');
       retour := 2;
     end if;
   end if;
@@ -130,7 +130,7 @@ end ;
 
 
 --------------------------------------------------------------------------------------------------------------
--- Connaître si les deux cartes retournées sont paires
+-- ConnaÃ®tre si les deux cartes retournÃ©es sont paires
 --------------------------------------------------------------------------------------------------------------
 create or replace function carte_paire(
 	pid_carte in Carte.id_carte%TYPE,
@@ -166,7 +166,7 @@ begin
 end ;
 /
 --------------------------------------------------------------------------------------------------------------
--- Donne le résultat d'une partie
+-- Donne le rÃ©sultat d'une partie
 --------------------------------------------------------------------------------------------------------------
 create or replace function partie_resultat(
 	pid_partie in Partie.id_partie%TYPE) 
@@ -180,21 +180,21 @@ create or replace function partie_resultat(
   nb_paire number;
   
 BEGIN
-  -- recupération des informations
+  -- recupÃ©ration des informations
   select id_niveau, id_joueur, id_joueur2 into vid_niveau, vid_joueur, vid_joueur2 from Partie where id_partie = pid_partie;
 
   -- Comptage des paires pour le joueur 1
   for cCoup in (select * from Coup where id_partie = pid_partie and id_joueur = vid_joueur) loop
-    if (retour_carte_paire = carte_paire(cCoup.carte1, cCoup.carte2)) then -- si c'est une paire
+    if (carte_paire(cCoup.carte1, cCoup.carte2) = 1) then -- si c'est une paire
       compteur := compteur + 1;
     end if;
   end loop;
   
   -- si c'est une partie solo
   if (vid_joueur2 is null) then
-    select ((nb_colonne*nb_ligne)/2) into nb_paire from Niveau where id_niveau = vid_joueur; -- calcule du nombre de paire pour gagner
+    select ((nb_colonne*nb_ligne)/2) into nb_paire from Niveau where id_niveau = vid_niveau; -- calcule du nombre de paire pour gagner
     if (compteur = nb_paire) then
-      return id_joueur_en_pseudo(vid_joueur); -- affichage du pseudo si gagné
+      return id_joueur_en_pseudo(vid_joueur); -- affichage du pseudo si gagnÃ©
     else 
       return 'Perdue';
     end if;
@@ -202,12 +202,12 @@ BEGIN
   else 
     -- Comptage des paires pour le joueur 2
     for cCoup2 in (select carte1, carte2 from Coup where id_partie = pid_partie and id_joueur = vid_joueur2) loop
-     if (retour_carte_paire = carte_paire(cCoup2.carte1, cCoup2.carte2)) then -- si c'est une paire
+     if (carte_paire(cCoup2.carte1, cCoup2.carte2) = 1) then -- si c'est une paire
        compteur2 := compteur2 + 1;
       end if;
     end loop;
     if (compteur = compteur2) then 
-      return 'Egalité';
+      return 'EgalitÃ©';
     elsif (compteur > compteur2) then
       return id_joueur_en_pseudo(vid_joueur);
     else 
@@ -285,7 +285,7 @@ BEGIN
         insert into Partie values(seq_partie.nextval, pId_niveau, pId_joueur, pId_joueur2);
         retour := 0;
       else 
-        dbms_output.put_line('Le joueur ' || id_joueur_en_pseudo(pId_joueur2) || ' a perdu 5 partie dans la dernière heure');
+        dbms_output.put_line('Le joueur ' || id_joueur_en_pseudo(pId_joueur2) || ' a perdu 5 partie dans la derniÃ¨re heure');
         retour := 2;
       end if;
     else
@@ -293,11 +293,11 @@ BEGIN
       retour := 0;
     end if;
   else
-    dbms_output.put_line('Le joueur ' || id_joueur_en_pseudo(pId_joueur2) || ' a perdu 5 partie dans la dernière heure');
+    dbms_output.put_line('Le joueur ' || id_joueur_en_pseudo(pId_joueur2) || ' a perdu 5 partie dans la derniÃ¨re heure');
     retour := 1;
   end if;
   
-EXCEPTION -- à compléter
+EXCEPTION -- Ã  complÃ©ter
   --when 
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
@@ -339,13 +339,13 @@ BEGIN
       where p.id_partie = c.id_partie 
       and c.id_joueur = pId_joueur
       and heure > current_timestamp - interval '1' HOUR) loop
-    if ((partie_resultat(cPartie.id_partie) <>  id_joueur_en_pseudo(pId_joueur)) or (partie_resultat(cPartie.id_partie) <>  'Egalité')) then
+    if ((partie_resultat(cPartie.id_partie) <>  id_joueur_en_pseudo(pId_joueur)) or (partie_resultat(cPartie.id_partie) <>  'EgalitÃ©')) then
       compteur := compteur + 1;
     end if;
   end loop;
   
   if compteur >= 5 then 
-    RAISE_APPLICATION_ERROR(-20001, 'Le joueur ' || id_joueur_en_pseudo(pId_joueur) || ' a perdu 5 partie dans la dernière heure');
+    RAISE_APPLICATION_ERROR(-20001, 'Le joueur ' || id_joueur_en_pseudo(pId_joueur) || ' a perdu 5 partie dans la derniÃ¨re heure');
   end if;
   
   return 0;
