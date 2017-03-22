@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-
 <?php
 session_start();
-
 include("db/connect.php");
 
 $strSQL = "select * FROM joueur";
@@ -12,7 +10,20 @@ if ( ! oci_execute($stmt) ){
 $err = oci_error($stmt);
 trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
+$niv1 =  oci_parse($dbConn,'begin :r := niveauJoueur(:id); end;'); // obtenir le niveau du joueur
+		oci_bind_by_name($niv1, ':id', $_SESSION['id'],10);
+		oci_bind_by_name($niv1, ':r', $nivJ1,10);
+		oci_execute($niv1);
+$niv2 =  oci_parse($dbConn,'begin :r := niveauJoueur(:id); end;'); // obtenir le niveau du joueur
+		oci_bind_by_name($niv2, ':id', $_SESSION['id2'],10);
+		oci_bind_by_name($niv2, ':r', $nivJ2,10);
+		oci_execute($niv2);
 
+if ($nivJ1 > $nivJ2) { 
+	$nivJ = $nivJ2 ;
+}else {
+	$nivJ = $nivJ1 ;;
+}
 ?>
 
 <html>
@@ -42,17 +53,35 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
       </div>
       </br>
       </br>
-      <p>
-      <a href="grillemono.php" class="bouton">Partie Mono-joueur </a>
-      </p>
-      <p>
-      <a href="multi.php" class="bouton">Partie Multijoueurs </a>
-      </p>
+    <table>
+    
+    <form method="post" action="multigame.php">
+<?php
 
-    </div>
+		$g=0;
+
+//Creation d'un formulaire qui affiche les niveaux via des boutons submit : grille 5*10
+		for ($ii=0; $ii<5 ; $ii++) { 
+			echo"<tr>";
+			for ($jj=0; $jj<10; $jj++) { 
+				$g++;
+				if ($g <= $nivJ) { 
+					echo"<td> <input type=\"submit\" name ='$g' value ='$g' id=$g /> </td>";
+				}else {
+					echo"<td>   $g  </td>";
+				}
+
+			} 
+			echo"</tr>";
+		
+		} 
+		?>
+    </form>
+    
+    </table>
 <?php
 echo $_SESSION['id'];
+echo $_SESSION['id2'];
 ?>
   </body>
-
 </html>

@@ -3,12 +3,12 @@
 session_start();
 include("db/connect.php");
 
-$strSQL = "select id_joueur from Joueur where xp=110";
+$strSQL = "select * from Joueur ";
 
 $stmt = oci_parse($dbConn,$strSQL);
 if ( ! oci_execute($stmt) ){
-$err = oci_error($stmt);
-trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
+	$err = oci_error($stmt);
+	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
 
 if(isset($_POST['forminscription'])) {
@@ -32,30 +32,30 @@ if(isset($_POST['forminscription'])) {
      oci_free_statement($reqpseudo);
      $erreur = $r; 
 
-     if($r == 0) {
-     
-     $reqid = oci_parse($dbConn, $strSQL);
-     oci_execute($reqid);
-	while (oci_fetch($reqid)){
-     $id = oci_result($reqid, 1);
-     }
-     $_SESSION['id'] = $id;
+	if($r == 0) {
+	$id =  oci_parse($dbConn,'select id_joueur from Joueur where mail = :mail');
+		oci_bind_by_name($id, ':mail', $_POST['mail'],50);
+		oci_execute($id);
+		while(oci_fetch($id)){
+			
+			$idjoueur = oci_result($id,1);
+		}
+		$_SESSION['id'] = $idjoueur;
+		header("Location: index.php");
+	}
+	else if($r == 1){
+	$erreur = " Connexion non autorisée: Mot de passe invalide ";
+	}
+	else if($r == 2){
+	$erreur = " Connexion non autorisée: adresse mail inconnue";
+	}
+	else{
+	$erreur = " Erreur ! ";
+	}
 
-     header("Location: index.php");
-     }
-     else if($r == 1){
-     $erreur = " Connexion non autorisée: Mot de passe invalide ";
-     }
-     else if($r == 2){
-     $erreur = " Connexion non autorisée: adresse mail inconnue";
-     }
-     else{
-     $erreur = " Erreur ! ";
-     }
-
-   } else {
-      $erreur = "Tous les champs doivent être complétés !";
-   }
+	} else {      
+	$erreur = "Tous les champs doivent être complétés !";
+   	}
 }
 ?>
 

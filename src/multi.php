@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <?php
-
+session_start();
 include("db/connect.php");
 
 $strSQL = "select * FROM joueur";
@@ -34,9 +34,14 @@ if(isset($_POST['forminscription'])) {
      $erreur = $r;
 
      if($r == 0) {
-     $_SESSION['id'] = $userinfo['id'];
-     $_SESSION['pseudo'] = $userinfo['pseudo'];
-     header("Location: jouermulti.php");
+	$idj2 =  oci_parse($dbConn,'select id_joueur from Joueur where mail = :mail');
+	oci_bind_by_name($idj2, ':mail', $_POST['mail'],50);
+	oci_execute($idj2);
+	while(oci_fetch($idj2)){
+		$idjoueur2 = oci_result($idj2,1);
+	}
+	$_SESSION['id2'] = $idjoueur2;
+	header("Location: grillemulti.php");
      }
      else if($r == 1){
      $erreur = " Connexion non autorisée: Mot de passe invalide ";
