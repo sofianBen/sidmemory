@@ -12,7 +12,6 @@ if ( ! oci_execute($stmt) ){
 $err = oci_error($stmt);
 trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
-
 ?>
 
 <html>
@@ -42,17 +41,31 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
       </div>
       </br>
       </br>
-      <p>
-      <a href="mono.php" class="bouton">Partie Mono-joueur </a>
-      </p>
-      <p>
-      <a href="multi.php" class="bouton">Partie Multijoueurs </a>
-      </p>
+    <table>
+    
+    <form method="post" action="jouer.php">
+    <?php
+    $g=0;
+    $nivMaxJ1 = 10;
+    $Clique = true;
+//Creation d'un formulaire qui affiche les niveaux via des boutons submit : grille 5*10
+    for ($ii=0; $ii<5 ; $ii++) { 
+      echo"<tr>";
+      for ($jj=0; $jj<10; $jj++) { 
+        $g++;
+        if ($g <= $nivMaxJ1) { 
+          echo"<td> <input type=\"submit\" name ='$g' value ='$g' id=$g /> </td>";
+        }else {
+          echo"<td>   $g  </td>";
+        }
 
-    </div>
-<?php
-echo $_SESSION['id'];
-?>
+      } 
+      echo"</tr>";
+    
+    } 
+    ?>
+    </form>
+    
+    </table>
   </body>
-
 </html>

@@ -107,3 +107,18 @@ table {
 	font-family: Comic Sans MS;
 	caption-side:top; /* positionne le titre en haut de la table */
 }
+
+a.bouton {
+  color: white;
+  background-color: #000080;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
+}
+a.bouton:hover {
+  background-color: #6495ED;
+}
+
+        
+
