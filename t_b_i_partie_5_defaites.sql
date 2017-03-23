@@ -11,7 +11,7 @@ DECLARE
   vNbPartie2 number := 0;
   
 BEGIN
-  select count(id_joueur) INTO vNbPartie 
+  select count(id_partie) INTO vNbPartie 
   from coup 
   where id_joueur = :new.id_joueur
   and heure > current_timestamp - interval '1' HOUR
@@ -19,12 +19,12 @@ BEGIN
   and partie_resultat(id_partie) != 'Egalité';
   
   if (:new.id_joueur2 is not null) then -- A VERIFIER
-    select count(id_joueur) INTO vNbPartie2
+    select count(id_partie) INTO vNbPartie2
     from coup 
     where id_joueur = :new.id_joueur2
     and heure > current_timestamp - interval '1' HOUR
     and partie_resultat(id_partie) != id_joueur_en_pseudo(id_joueur)
-    and partie_resultat(id_partie) = 'Egalité';
+    and partie_resultat(id_partie) != 'Egalité';
   end if;
   
   if (vNbPartie >= 5)  then   
@@ -34,3 +34,4 @@ BEGIN
   end if;
   
 END;
+/
