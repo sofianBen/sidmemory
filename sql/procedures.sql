@@ -382,6 +382,32 @@ end ;
 
 
 --------------------------------------------------------------------------------------------------------------
+-- Ajouter un coup 
+--------------------------------------------------------------------------------------------------------------
+create or replace procedure insert_coup(
+    pId_partie in partie.id_partie%type,
+    pId_joueur in Joueur.id_joueur%type,
+    pCarte1 in Carte.id_carte%type,
+    pCarte2 in Carte.id_carte%type,
+    retour number) AS
+  
+BEGIN
+
+  INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, pId_partie, pId_joueur,  pCarte1, pCarte2);
+
+
+EXCEPTION
+  -- todo
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    retour := -1; 
+END;
+/
+
+
+
+
+--------------------------------------------------------------------------------------------------------------
 -- Fonction qui retourne la durée d'une partie pour un id_partie donné
 --------------------------------------------------------------------------------------------------------------
 create or replace function duree_partie(
