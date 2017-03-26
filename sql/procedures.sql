@@ -378,3 +378,34 @@ begin
   dbms_output.put_line(verification_defaites(1)); -- rajouter des valeurs dans les tables
 end ;
 /
+
+
+
+--------------------------------------------------------------------------------------------------------------
+-- Fonction qui retourne la durée d'une partie pour un id_partie donné
+--------------------------------------------------------------------------------------------------------------
+create or replace function duree_partie(
+    pId_partie in Partie.id_partie%type)
+    return INTERVAL DAY TO SECOND as
+
+  vDuree INTERVAL DAY TO SECOND;
+  
+BEGIN
+
+  select max(heure) - min(heure) into vDuree
+  from coup where id_partie = pId_partie;
+  
+  return vDuree;
+
+EXCEPTION
+  when NO_DATA_FOUND then
+    dbms_output.put_line(pId_partie || ' n''est pas un identifiant de partie.');
+    return null;
+END;
+/
+
+-- test
+begin 
+  dbms_output.put_line(duree_partie(1)); -- rajouter des valeurs dans les tables
+end ;
+/
