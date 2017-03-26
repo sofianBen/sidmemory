@@ -409,3 +409,35 @@ begin
   dbms_output.put_line(duree_partie(1)); -- rajouter des valeurs dans les tables
 end ;
 /
+
+
+
+--------------------------------------------------------------------------------------------------------------
+-- Fonction qui retourne le nombre de coups d'une partie pour un id_partie donné
+--------------------------------------------------------------------------------------------------------------
+
+create or replace function nb_coup_partie(
+    pId_partie in Partie.id_partie%type)
+    return number as
+
+  vNb_Coup number;
+  
+BEGIN
+
+  select count(id_coup) into vNb_Coup
+  from coup 
+  where id_partie = pId_partie;
+  
+  return vNb_Coup;
+
+EXCEPTION
+  when NO_DATA_FOUND then
+    dbms_output.put_line(pId_partie || ' n''est pas un identifiant de partie.');
+    return null;
+END;
+  
+-- test
+begin 
+  dbms_output.put_line(nb_coup_partie(1)); -- rajouter des valeurs dans les tables
+end ;
+/
