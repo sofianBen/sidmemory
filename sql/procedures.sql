@@ -456,7 +456,6 @@ END;
 
 
 
-
 --------------------------------------------------------------------------------------------------------------
 -- Fonction qui retourne la durée d'une partie pour un id_partie donné
 --------------------------------------------------------------------------------------------------------------
@@ -491,7 +490,6 @@ end ;
 --------------------------------------------------------------------------------------------------------------
 -- Fonction qui retourne le nombre de coups d'une partie pour un id_partie donné
 --------------------------------------------------------------------------------------------------------------
-
 create or replace function nb_coup_partie(
     pId_partie in Partie.id_partie%type)
     return number as
@@ -515,5 +513,35 @@ END;
 -- test
 begin 
   dbms_output.put_line(nb_coup_partie(1)); -- rajouter des valeurs dans les tables
+end ;
+/
+
+
+--------------------------------------------------------------------------------------------------------------
+-- Fonction qui retourne la date et l'heure d'une partie pour un id_partie donné
+--------------------------------------------------------------------------------------------------------------
+create or replace function heure_partie(
+    pId_partie in Partie.id_partie%type)
+    return Coup.heure%TYPE as
+
+  vHeure Coup.heure%TYPE;
+  
+BEGIN
+
+  select max(heure) into vHeure
+  from coup 
+  where id_partie = pId_partie;
+  
+  return vHeure;
+
+EXCEPTION
+  when NO_DATA_FOUND then
+    dbms_output.put_line(pId_partie || ' n''est pas un identifiant de partie.');
+    return null;
+END;
+  
+-- test
+begin 
+  dbms_output.put_line(heure_partie(1)); -- rajouter des valeurs dans les tables
 end ;
 /
