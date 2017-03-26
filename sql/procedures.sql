@@ -271,69 +271,59 @@ end ;
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 1 joueur
 --------------------------------------------------------------------------------------------------------------
-create or replace procedure creationPartie(
+create or replace procedure creation_partie(
     pId_niveau in Niveau.id_niveau%TYPE,
     pId_joueur in Joueur.id_joueur%TYPE,
-    retour out number) AS
+    rId_partie out Partie.id_partie%TYPE) AS
 
-nbCarte number := 0;
-vNb_ligne Carte.nb_ligne%TYPE;
-vNb_colonne Carte.nb_colonne%TYPE;
-type typ_tab_random is table of number; -- déclaration d'un type 'tableau' de nombres aléatoires
-tabRandom typ_tab_random; -- déclaration du tableau
-ligne number := 0;
-colonne number := 0;
-i number := 0; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
+  vCollection Collection.id_collection%TYPE;
+  nbCarte number := 0;
+  vMinId_image Image.id_image%TYPE; 
+  vNb_ligne Niveau.nb_ligne%TYPE;
+  vNb_colonne Niveau.nb_colonne%TYPE;
+  type typ_tab_random is varray(100) of number; -- déclaration d'un type 'tableau' de nombres aléatoires
+  tabId_image typ_tab_random; -- déclaration du tableau
+  ligne number := 0;
+  colonne number := 0;
+  i number := 1; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
 
 BEGIN
-  insert into Partie values(seq_partie.nextval, pId_niveau, pId_joueur, null);
+  select seq_partie.nextval into rId_partie from dual;
+  insert into Partie(id_partie, id_niveau, id_joueur) values(rId_partie, pId_niveau, pId_joueur);
   -- après l'insert dans la table Partie, le trigger verification_defaites va être lancé tout seul
 
--- select pour avoir les nombres de lignes et les nombres de colonnes
+  -- select pour avoir les nombres de lignes et les nombres de colonnes
   select nb_ligne, nb_colonne into vNb_ligne, vNb_colonne from Niveau where id_niveau = pId_niveau;
+  
+  -- séléction de la collection en foncrtion du niveau
+  select id_collection into vCollection from Niveau
+  where id_niveau = pId_niveau;
+  
+  -- sélction de la première image de la collection
+  select min(id_image) into vMinId_image 
+  from Image where id_collection = vCollection;
 
-
-
--- stocker dans un tableau des nombres aléatoires en évitant les doublants
-  select distinct trunc(dbms_random.values(1,vNb_ligne*vNb_colonne)) alea BULK COLLECT into tabRandom
+  -- stocker dans un tableau des nombres aléatoires en évitant les doublants
+  -- ces nombres seront piochés parmis les 'id_image' de la bonne collection
+  select distinct trunc(dbms_random.value(vMinId_image,vMinId_image+(vNb_ligne*vNb_colonne))) BULK COLLECT into tabId_image
   from dual
   connect by level <= 500
   order by dbms_random.value;
 
--- boucle for pour créer les tuples de la table Carte
+  -- boucle for pour créer les tuples de la table Carte
   for ligne in 1..vNb_ligne loop
     for colonne in 1..vNb_colonne loop
-      tabRandom(i).alea; -- to_char à rajouter si ça marche pas
-      insert into Carte values (seq_carte.nextval, vNb_ligne, vNb_colonne, vImage, seq_partie.currval); -- stocker la variable de retour à la place de mettre sql_partie.currval
+      insert into Carte values (seq_carte.nextval, vNb_ligne, vNb_colonne, tabId_image(i), rId_partie); -- stocker la variable de retour à la place de mettre sql_partie.currval
+      i := i + 1;
     End loop;
   End loop;
 
-  -- gérer le retour de la procédure : id_partie pour la partie web
-  retour := seq_partie.currval; -- currval récupère la valeur courante/actuelle
-  -- la fin
-
-
 EXCEPTION -- à compléter
---when
-when others then
-dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-retour := -1;
-END;
-/
+  --when todo
+  when others then
+  dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
 
--- test
-declare
-  retour number;
-begin
-  creationPartie(1, '', 1, retour);
-  dbms_output.put_line(retour);
-end ;
-/
--- test
-begin
-  --select * from partie order by 1;
-  dbms_output.put_line(partie_resultat(1));
-end ;
+END;
 /
 
 
