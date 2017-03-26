@@ -20,8 +20,8 @@ INSERT INTO Categorie VALUES (10, 'Žlite', 450, 99999);
 
 -- Insert Joueur
 CREATE SEQUENCE seq_joueur;
-INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'zouzou','abc@gmail.com','sid',0,1);
-INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'bibi','bibi@gmail.com','alcool',110,3);
+INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'coucou','abc@gmail.com','sid',0,1);
+INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'bibi','bibi@gmail.com','ok',110,3);
 
 
 -- Insert Collection
@@ -88,37 +88,37 @@ INSERT INTO Niveau VALUES (50,490,INTERVAL '20' SECOND,8,8,5);
 CREATE SEQUENCE seq_image;
 --find . | sed 's/[^/]*\//|   /g;s/| *\([^| ]\)/\1/'
 -- Collection 1
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/bleu rond.png', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/bleu_rond.png', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert.png', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/noir.png', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rouge.png', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert claire.png       ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert rond.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert_claire.png       ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert_rond.png         ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/violet.png            ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rouge rond.png        ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rouge_rond.png        ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/bleu.png              ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond marron.png       ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_marron.png       ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/orange.png            ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond rouge.png        ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond vert claire.png  ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond vert.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_rouge.png        ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_vert_claire.png  ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_vert.png         ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/gris.png              ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/jaune.png             ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/marron.png            ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond bleu.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_bleu.png         ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/turquoise.png         ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond rose.png         ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond violet.png       ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/jaune rond.png        ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_rose.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_violet.png       ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/jaune_rond.png        ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/blanc.png             ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond turquois.png     ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond gris.png         ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert clair rond.png   ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond orange.png       ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond noir.png         ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/turquoise rond.png    ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_turquois.png     ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_gris.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/vert_clair rond.png   ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_orange.png       ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_noir.png         ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/turquoise_rond.png    ', 1);
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rose.png              ', 1);
-INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond jaune.png        ', 1);
+INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection1/rond_jaune.png        ', 1);
 
 --Collection2
 INSERT INTO Image VALUES (seq_image.NEXTVAL, 'collections/collection2/034.png', 2);
