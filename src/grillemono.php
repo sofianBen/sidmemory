@@ -7,13 +7,14 @@ $strSQL = "select * FROM joueur";
 
 $stmt = oci_parse($dbConn,$strSQL);
 if ( ! oci_execute($stmt) ){
-$err = oci_error($stmt);
-trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
+	$err = oci_error($stmt);
+	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
+
 $nivMax =  oci_parse($dbConn,'begin :r := niveauJoueur(:id); end;'); // obtenir le niveau du joueur
-		oci_bind_by_name($nivMax, ':id', $_SESSION['id'],10);
-		oci_bind_by_name($nivMax, ':r', $nivJ,10);
-		oci_execute($nivMax);
+oci_bind_by_name($nivMax, ':id', $_SESSION['id'],10);
+oci_bind_by_name($nivMax, ':r', $nivJ,10);
+oci_execute($nivMax);
 		
 ?>
 <html>
@@ -69,3 +70,5 @@ $nivMax =  oci_parse($dbConn,'begin :r := niveauJoueur(:id); end;'); // obtenir 
 		
 		</table>
 	</body>
+</html>
+

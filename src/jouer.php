@@ -9,8 +9,8 @@ $strSQL = "select * FROM joueur";
 
 $stmt = oci_parse($dbConn,$strSQL);
 if ( ! oci_execute($stmt) ){
-$err = oci_error($stmt);
-trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
+  $err = oci_error($stmt);
+  trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
 
 ?>
@@ -42,8 +42,8 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
       </div>
       </br>
       </br>
-      <p>
-      <a href="grillemono.php" class="bouton">Partie Mono-joueur </a>
+      <p> <!-- choix du type de jeu -->
+      <a href="grillemono.php" class="bouton">Partie Mono-joueur </a> 
       </p>
       <p>
       <a href="multi.php" class="bouton">Partie Multijoueurs </a>

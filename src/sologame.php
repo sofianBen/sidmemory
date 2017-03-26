@@ -7,21 +7,22 @@ $strSQL = "select * FROM joueur";
 
 $stmt = oci_parse($dbConn,$strSQL);
 if ( ! oci_execute($stmt) ){
-$err = oci_error($stmt);
-trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
+	$err = oci_error($stmt);
+	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
+
 $Ligne=  oci_parse($dbConn,'SELECT nb_ligne FROM Partie P, Niveau  N where id_partie =1 and P.id_Niveau = N.id_Niveau');
-		oci_execute($Ligne);
-		while(oci_fetch($Ligne)){
-			
-			$LigneMax = oci_result($Ligne,1);
-		}
+oci_execute($Ligne);
+
+while(oci_fetch($Ligne)){			
+	$LigneMax = oci_result($Ligne,1);
+}
+
 $Colonne=  oci_parse($dbConn,'SELECT nb_colonne FROM Partie P, Niveau  N where id_partie =1 and P.id_Niveau = N.id_Niveau');
-		oci_execute($Colonne);
-		while(oci_fetch($Colonne)){
-			
-			$ColonneMax = oci_result($Colonne,1);
-		}
+oci_execute($Colonne);
+while(oci_fetch($Colonne)){			
+	$ColonneMax = oci_result($Colonne,1);
+}
 		
 ?> 
 
@@ -118,4 +119,5 @@ $Colonne=  oci_parse($dbConn,'SELECT nb_colonne FROM Partie P, Niveau  N where i
     nb=nombre_coup();
     <p> Nombre de coups = nbcoups </p>
   </body>
+  
 </html>

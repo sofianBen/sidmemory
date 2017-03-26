@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <?php
-session_start();
+session_start(); 
 
 include("db/connect.php");
 
@@ -26,11 +26,10 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
   <body>
     <div id = "base">
       <h1 class = "centrer"> Memory </h1>
-      <!-- code du menu -->
 
-      <div id= "menu">
+      <div id= "menu"> <!-- code du menu -->
         <nav>
-          <ul class="top-menu">
+          <ul class="top-menu"> <!-- les onglets -->
             <li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
             <li><a href="jouer.php">Jouer</a><div class="menu-item" id="item2"></div></li>
             <li><a href="regles.php">Regles</a><div class="menu-item" id="item3"></div></li>
@@ -39,13 +38,15 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
           </ul>
         </nav>
       </div>
-      <img src = "memory.jpg" width = 400 alt="memory">
+      
+      <img src = "memory.jpg" width = 400 alt="memory"> <!-- image de memory -->
 
       <div id = "milieu" class = "centrer">
         <div id = "centre">
           <p class = "centrer"><strong>Créateurs</strong>: Céline, Claire, Camille et Sofian</p>
           <p class = "centrer"> Etudiant de  l'Université Paul Sabatier (<a href="https://www.google.fr/maps/place/120+rue+de+Narbonne+31400+toulouse" target="_blank">plan</a>)</p>
         </div>
+
       </div>
     </div>
   </body>

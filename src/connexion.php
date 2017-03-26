@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <?php
 session_start();
 include("db/connect.php");
@@ -12,50 +13,49 @@ if ( ! oci_execute($stmt) ){
 };
 
 if(isset($_POST['forminscription'])) {
+  $mail = htmlspecialchars($_POST['mail']); // enregistre dans une variable le mail ecrit par l'utilisateur
+  $mdp = sha1($_POST['mdp']); // idem avec le moot de passe. sha1 permet de sécuriser le mdp
 
-   $mail = htmlspecialchars($_POST['mail']);
-   $mdp = sha1($_POST['mdp']); // permet de sécuriser le mdp
+  if(!empty($_POST['mail']) AND !empty($_POST['mdp']) ) {
 
-   if(!empty($_POST['mail']) AND !empty($_POST['mdp']) ) {
+    $mail = $_POST['mail'];
+    $mdp = $_POST['mdp'];
 
-     $mail = $_POST['mail'];
-     $mdp = $_POST['mdp'];
+    $reqpseudo = oci_parse($dbConn, 'begin connexion(:mail, :mdp, :r); end;'); // appel à la procédure connexion
 
-     $reqpseudo = oci_parse($dbConn, 'begin connexion(:mail, :mdp, :r); end;');
+    oci_bind_by_name($reqpseudo, ':mail', $mail,50);
+    oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
+    oci_bind_by_name($reqpseudo, ':r', $r, 10);
 
-     oci_bind_by_name($reqpseudo, ':mail', $mail,50);
-     oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
-     oci_bind_by_name($reqpseudo, ':r', $r, 10);
+    oci_execute($reqpseudo);
 
-     oci_execute($reqpseudo);
+    oci_free_statement($reqpseudo); // Libère toutes les ressources réservées par un résultat Oracle. Cette fonction retourne TRUE en cas de succès ou FALSE si une erreur survient.
+    $erreur = $r; 
 
-     oci_free_statement($reqpseudo);
-     $erreur = $r; 
-
-	if($r == 0) {
-	$id =  oci_parse($dbConn,'select id_joueur from Joueur where mail = :mail');
-		oci_bind_by_name($id, ':mail', $_POST['mail'],50);
-		oci_execute($id);
-		while(oci_fetch($id)){
-			
-			$idjoueur = oci_result($id,1);
-		}
-		$_SESSION['id'] = $idjoueur;
-		header("Location: index.php");
-	}
-	else if($r == 1){
-	$erreur = " Connexion non autorisée: Mot de passe invalide ";
-	}
-	else if($r == 2){
-	$erreur = " Connexion non autorisée: adresse mail inconnue";
-	}
-	else{
-	$erreur = " Erreur ! ";
-	}
-
-	} else {      
-	$erreur = "Tous les champs doivent être complétés !";
-   	}
+    if($r == 0) { // si aucune erreur est renvoyé au retour alors on effectue la connexion
+      $id =  oci_parse($dbConn,'select id_joueur from Joueur where mail = :mail'); // requête pour obtenir l'identifiant de l'utilisateur grâce à son mail
+		  oci_bind_by_name($id, ':mail', $_POST['mail'],50);
+		  oci_execute($id);
+		  
+      while(oci_fetch($id)){
+        $idjoueur = oci_result($id,1);
+      }
+		  $_SESSION['id'] = $idjoueur; // valeurs stockées dans la session de l'utilisateur, on conserve son Identifiant
+		  header("Location: index.php"); // permet d'aller sur la page d'acceuil (index.php) après être connecté
+    }
+    else if($r == 1){
+      $erreur = " Connexion non autorisée: Mot de passe invalide ";
+    }
+    else if($r == 2){
+      $erreur = " Connexion non autorisée: adresse mail inconnue";
+    }
+    else{
+      $erreur = " Erreur ! ";
+    }
+  } 
+  else {      
+    $erreur = "Tous les champs doivent être complétés !";
+  }
 }
 ?>
 
@@ -64,7 +64,6 @@ if(isset($_POST['forminscription'])) {
     <title> Jeu: Memory </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <script src="index.js"></script>
     <link rel="stylesheet" href="index.css">
   </head>
 
@@ -73,7 +72,7 @@ if(isset($_POST['forminscription'])) {
       <h1 class = "centrer"> Memory </h1>
       <div id= "menu">
         <nav>
-          <ul class="top-menu">
+          <ul class="top-menu"> <!-- Barre de menu --> 
             <li><a href="inscription.php">S'inscrire</a><div class="menu-item" id="item5"></div></li>
             <li><a href="connexion.php">Se connecter</a><div class="menu-item" id="item6"></div></li>
           </ul>
@@ -83,7 +82,7 @@ if(isset($_POST['forminscription'])) {
       <h2>Connexion</h2>
       <br /><br />
 
-      <form method="POST" action="">
+      <form method="POST" action=""> <!-- Formulaire de connexion--> 
         <table>
           <tr>
             <td align="right">
@@ -108,7 +107,7 @@ if(isset($_POST['forminscription'])) {
             </td>
           </tr>
         </table>
-      </form>
+      </form> <!-- On affiche un message d'erreur --> 
       <?php
       if(isset($erreur)) {
         echo $erreur;

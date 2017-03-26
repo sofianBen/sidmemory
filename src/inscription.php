@@ -16,17 +16,17 @@ if(isset($_POST['forminscription'])) {
    $mail = htmlspecialchars($_POST['mail']);
    $mdp = sha1($_POST['mdp']); // permet de sécuriser le mdp
 
-   if(!empty($_POST['pseudo']) AND !empty($_POST['mail']) AND !empty($_POST['mdp']) ) {
+   if(!empty($_POST['pseudo']) AND !empty($_POST['mail']) AND !empty($_POST['mdp']) ) { // si tout est rempli alors:
      $ps = $_POST['pseudo'];
      $mail = $_POST['mail'];
      $mdp = $_POST['mdp'];
 
-     $reqpseudo = oci_parse($dbConn, 'begin inscription(:ps, :mail, :mdp, :r); end;');
+     $reqpseudo = oci_parse($dbConn, 'begin inscription(:ps, :mail, :mdp, :r); end;'); // appel à la procédure inscription
 
      oci_bind_by_name($reqpseudo, ':ps', $ps,50);
      oci_bind_by_name($reqpseudo, ':mail', $mail,50);
      oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
-     oci_bind_by_name($reqpseudo, ':r', $r, 10);
+     oci_bind_by_name($reqpseudo, ':r', $r, 10); // la variable r est la variable retour de notre procédure
 
      oci_execute($reqpseudo);
 
@@ -64,7 +64,7 @@ if(isset($_POST['forminscription'])) {
       <h1 class = "centrer"> Memory </h1>
       <div id= "menu">
         <nav>
-          <ul class="top-menu">
+          <ul class="top-menu"> <!-- Barre de menu --> 
             <li><a href="inscription.php">S'inscrire</a><div class="menu-item" id="item5"></div></li>
             <li><a href="connexion.php">Se connecter</a><div class="menu-item" id="item6"></div></li>
           </ul>
@@ -73,7 +73,7 @@ if(isset($_POST['forminscription'])) {
       <h2>Inscription</h2>
       <br /><br />
 
-      <form method="POST" action="">
+      <form method="POST" action=""> <!-- Formulaire d'inscription --> 
         <table>
           <tr>
             <td align="right">
@@ -106,8 +106,7 @@ if(isset($_POST['forminscription'])) {
             </td>
           </tr>
         </table>
-      </form>
-
+      </form> <!-- On affiche un message d'erreur --> 
       <?php
       if(isset($erreur)) {
         echo $erreur;
