@@ -359,7 +359,7 @@ END;
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 2 joueurs
 --------------------------------------------------------------------------------------------------------------
-create or replace procedure creation_partie_solo(
+create or replace procedure creation_partie_multi(
     pId_niveau in Niveau.id_niveau%TYPE,
     pId_joueur in Joueur.id_joueur%TYPE,
     pId_joueur2 in Joueur.id_joueur%TYPE,
