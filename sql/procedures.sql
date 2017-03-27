@@ -439,12 +439,12 @@ create or replace procedure insert_coup(
     pId_joueur in Joueur.id_joueur%type,
     pCarte1 in Carte.id_carte%type,
     pCarte2 in Carte.id_carte%type,
-    retour number) AS
+    retour out number) AS
   
 BEGIN
 
   INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, pId_partie, pId_joueur,  pCarte1, pCarte2);
-
+  retour := 1;
 
 EXCEPTION
   -- todo
