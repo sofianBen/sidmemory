@@ -324,7 +324,7 @@ BEGIN
   order by dbms_random.value;
 
   -- on doit placer aléatoirement les cartes sur le plateau de joueur
-  select distinct trunc(dbms_random.value(1,vNb_ligne*vNb_colonne+1) BULK COLLECT into tab_emplacement
+  select distinct trunc(dbms_random.value(1,vNb_ligne*vNb_colonne+1)) BULK COLLECT into tab_emplacement
   from dual
   connect by level <= 500
   order by dbms_random.value;
@@ -404,7 +404,7 @@ BEGIN
   order by dbms_random.value;
 
   -- on doit placer aléatoirement les cartes sur le plateau de joueur
-  select distinct trunc(dbms_random.value(1,vNb_ligne*vNb_colonne+1) BULK COLLECT into tab_emplacement
+  select distinct trunc(dbms_random.value(1,vNb_ligne*vNb_colonne+1)) BULK COLLECT into tab_emplacement
   from dual
   connect by level <= 500
   order by dbms_random.value;
