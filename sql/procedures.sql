@@ -290,13 +290,17 @@ create or replace procedure creation_partie_solo(
   vMinId_image Image.id_image%TYPE;
   vNb_ligne Niveau.nb_ligne%TYPE;
   vNb_colonne Niveau.nb_colonne%TYPE;
-  type typ_tab is varray(100) of number; -- déclaration d'un type 'tableau' de nombres aléatoires
+  
+  type typ_tab is table of number(2) INDEX BY BINARY_INTEGER; -- déclaration d'un type 'tableau' de nombres aléatoires
   tabId_image typ_tab; -- déclaration du tableau d'image piochées aléatoirement
-  tab_emplacement typ_tab; -- déclaration du tableau des emplacements aléatoires
   tab_carte typ_tab; -- déclaration du tableau de carte <=> plateau de jeu
+  
+  type typ_tab_index is table of BINARY_INTEGER INDEX BY BINARY_INTEGER;  -- déclaration du tableau des emplacements aléatoires
+  tab_emplacement typ_tab_index;
+  
   ligne number := 0;
   colonne number := 0;
-  i number := 1; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
+  i pls_integer := 1; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
 
 
 BEGIN
@@ -308,131 +312,68 @@ BEGIN
   select nb_ligne, nb_colonne into vNb_ligne, vNb_colonne from Niveau where id_niveau = pId_niveau;
 
   -- séléction de la collection en fonction du niveau
-  select id_collection into vCollection from Niveau
+  select id_collection into vCollection 
+  from Niveau
   where id_niveau = pId_niveau;
 
   -- sélection de la première image de la collection
   select min(id_image) into vMinId_image
-  from Image where id_collection = vCollection;
+  from Image 
+  where id_collection = vCollection;
 
   -- stocker dans un tableau des nombres aléatoires en évitant les doublants
   -- ces nombres seront piochés parmis les 'id_image' de la bonne collection
-  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+(vNb_ligne*vNb_colonne*0.5)))+1) BULK COLLECT into tabId_image
+  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+(vNb_ligne*vNb_colonne*0.5))+1)) BULK COLLECT into tabId_image
   -- on multiplie par 0.5 pour avoir que la moitié des cartes (50 cartes <=> 25 paires)
   from dual
   connect by level <= 500
   order by dbms_random.value;
 
   -- on doit placer aléatoirement les cartes sur le plateau de joueur
-  select distinct trunc(dbms_random.value(1,vNb_ligne*vNb_colonne+1)) BULK COLLECT into tab_emplacement
+  select distinct trunc(dbms_random.value(1,(vNb_ligne*vNb_colonne)+1)) BULK COLLECT into tab_emplacement
   from dual
   connect by level <= 500
   order by dbms_random.value;
-
+  
+  i := 1;
   for lecture in 1..2 loop -- pour lire 2 fois le tableau tabId_image afin de mettre les paires dans les emplacements
     for image in tabId_image.first..tabId_image.last loop
-      tab_carte(tab_emplacement(i)) := tabId_image(image); -- dans la table carte à un emplacement aléatoire on place l'image
+      tab_carte(i) := tabId_image(image);
+			--DBMS_OUTPUT.PUT_LINE(tab_carte(i));
+      --DBMS_OUTPUT.PUT_LINE(tab_emplacement(i)); -- dans la table carte à un emplacement aléatoire on place l'image  
       i := i + 1; -- on passe à l'emplacement aléatoire suivant
     End loop;
   End loop;
-
-  i := 1; -- réinitialisation de i car il a été utilisé plus tôt
-  -- boucle for pour créer les tuples de la table Carte
+  
+  i := 1;
   for ligne in 1..vNb_ligne loop
     for colonne in 1..vNb_colonne loop
-      insert into Carte values (seq_carte.nextval, vNb_ligne, vNb_colonne, tab_carte(i), rId_partie); -- stocker la variable de retour à la place de mettre sql_partie.currval
-      i := i + 1;
-    End loop;
-  End loop;
-			
+      --DBMS_OUTPUT.PUT_LINE(i || ' - ' || ligne || ' - ' || colonne || ' - ' || tab_carte(tab_emplacement(i)));
+      insert into Carte values (seq_carte.nextval, ligne, colonne, tab_carte(tab_emplacement(i)), rId_partie); -- stocker la variable de retour à la place de mettre sql_partie.currval
+      i := i + 1 ;
+    end loop;
+  end loop;
+
   COMMIT;
 			
 EXCEPTION -- à compléter
   --when todo
   when others then
   dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-
-
 END;
 /
 
---------------------------------------------------------------------------------------------------------------
--- creationPartie pour 2 joueurs
---------------------------------------------------------------------------------------------------------------
-create or replace procedure creation_partie_multi(
-    pId_niveau in Niveau.id_niveau%TYPE,
-    pId_joueur in Joueur.id_joueur%TYPE,
-    pId_joueur2 in Joueur.id_joueur%TYPE,
-    rId_partie out Partie.id_partie%TYPE) AS -- rId_partie : objet retourné à la fin de la partie
-
-  vCollection Collection.id_collection%TYPE;
-  nbCarte number := 0;
-  vMinId_image Image.id_image%TYPE;
-  vNb_ligne Niveau.nb_ligne%TYPE;
-  vNb_colonne Niveau.nb_colonne%TYPE;
-  type typ_tab is varray(100) of number; -- déclaration d'un type 'tableau' de nombres aléatoires
-  tabId_image typ_tab; -- déclaration du tableau d'image piochées aléatoirement
-  tab_emplacement typ_tab; -- déclaration du tableau des emplacements aléatoires
-  tab_carte typ_tab; -- déclaration du tableau de carte <=> plateau de jeu
-  ligne number := 0;
-  colonne number := 0;
-  i number := 1; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
-
-
-BEGIN
-  select seq_partie.nextval into rId_partie from dual; -- insère dans la variable rId_partie la valeur de l'Id de la partie qu'on veut créer
-  insert into Partie(id_partie, id_niveau, id_joueur,id_joueur2) values(rId_partie, pId_niveau, pId_joueur,pId_joueur2);
-  -- après l'insert dans la table Partie, le trigger verification_defaites va être lancé tout seul
-
-  -- select pour avoir les nombres de lignes et les nombres de colonnes
-  select nb_ligne, nb_colonne into vNb_ligne, vNb_colonne from Niveau where id_niveau = pId_niveau;
-
-  -- séléction de la collection en fonction du niveau
-  select id_collection into vCollection from Niveau
-  where id_niveau = pId_niveau;
-
-  -- sélection de la première image de la collection
-  select min(id_image) into vMinId_image
-  from Image where id_collection = vCollection;
-
-  -- stocker dans un tableau des nombres aléatoires en évitant les doublants
-  -- ces nombres seront piochés parmis les 'id_image' de la bonne collection
-  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+(vNb_ligne*vNb_colonne*0.5)))+1) BULK COLLECT into tabId_image
-  -- on multiplie par 0.5 pour avoir que la moitié des cartes (50 cartes <=> 25 paires)
-  from dual
-  connect by level <= 500
-  order by dbms_random.value;
-
-  -- on doit placer aléatoirement les cartes sur le plateau de joueur
-  select distinct trunc(dbms_random.value(1,vNb_ligne*vNb_colonne+1)) BULK COLLECT into tab_emplacement
-  from dual
-  connect by level <= 500
-  order by dbms_random.value;
-
-  for lecture in 1..2 loop -- pour lire 2 fois le tableau tabId_image afin de mettre les paires dans les emplacements
-    for image in tabId_image.first..tabId_image.last loop
-      tab_carte(tab_emplacement(i)) := tabId_image(image); -- dans la table carte à un emplacement aléatoire on place l'image
-      i := i + 1; -- on passe à l'emplacement aléatoire suivant
-    End loop;
-  End loop;
-
-  i := 1; -- réinitialisation de i car il a été utilisé plus tôt
-  -- boucle for pour créer les tuples de la table Carte
-  for ligne in 1..vNb_ligne loop
-    for colonne in 1..vNb_colonne loop
-      insert into Carte values (seq_carte.nextval, vNb_ligne, vNb_colonne, tab_carte(i), rId_partie); -- stocker la variable de retour à la place de mettre sql_partie.currval
-      i := i + 1;
-    End loop;
-  End loop;
-  COMMIT;
-
-EXCEPTION -- à compléter
-  --when todo
-  when others then
-  dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-
-END;
+declare
+  ret number;
+begin 
+  creation_partie_solo(29, 2, ret);
+  DBMS_OUTPUT.PUT_LINE('id_partie : ' || ret);
+end;
 /
+select * from carte;
+
+
+
 
 --------------------------------------------------------------------------------------------------------------
 -- verification_defaites
