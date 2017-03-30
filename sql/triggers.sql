@@ -162,3 +162,30 @@ BEGIN
 END;
 /
 
+-------------------------------------------------------------------------------
+-- Trigger qui vérifie lors de l'insertion d'un coup que la partie correspondante
+-- est encore en cours
+-------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER t_b_i_coup_blocage
+BEFORE INSERT ON Coup
+FOR EACH ROW
+
+DECLARE
+  vEtat Partie.etat%TYPE;
+BEGIN 
+  select etat into vEtat from partie where id_partie = :new.id_partie;
+  
+  if vEtat = 'Terminé' then
+    RAISE_APPLICATION_ERROR(-20107,'la partie est terminée, vous ne pouvez plus jouer');
+  end if;
+  END;
+  /
+  
+select * from partie;
+
+update partie set etat = 'Terminé'
+where id_partie = 15;
+
+select * from coup;
+
+insert into coup(id_coup,id_partie,id_joueur,carte1,carte2) values(seq_coup.nextval,15,2,1,2);
