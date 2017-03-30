@@ -189,3 +189,30 @@ where id_partie = 15;
 select * from coup;
 
 insert into coup(id_coup,id_partie,id_joueur,carte1,carte2) values(seq_coup.nextval,15,2,1,2);
+
+
+
+-------------------------------------------------------------------------------
+-- Trigger qui vérifie lors de l'insertion d'une partie que le niveau des joueurs correspondent au niveau de la partie
+-- est encore en cours
+-------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER t_b_i_partie_correspondance_niveau
+BEFORE INSERT ON Partie
+FOR EACH ROW
+
+DECLARE
+  vNiveauJoueur number := niveau_joueur(:new.id_joueur);
+  vNiveauJoueur2 number;
+BEGIN 
+  if :new.joueur2 is not null then
+    if :new.id_niveau > vNiveauJoueur2 and :new.id_niveau > vNiveauJoueur then
+      raise_application_error(-20100,'les niveaux des deux joueurs ne correspondent pas au niveau de la partie');
+    end if;
+  else 
+    if :new.id_niveau > vNiveauJoueur then
+      raise_application_error(-20101,'le niveau du joueur ne correspond pas au niveau de la partie');
+    end if;
+  end if;
+  
+  END;
+  /
