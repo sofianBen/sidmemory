@@ -7,14 +7,13 @@ $strSQL = "select * FROM joueur";
 
 $stmt = oci_parse($dbConn,$strSQL);
 if ( ! oci_execute($stmt) ){
-	$err = oci_error($stmt);
-	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
+$err = oci_error($stmt);
+trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
-
-$nivMax =  oci_parse($dbConn,'begin :r := niveauJoueur(:id); end;'); // obtenir le niveau du joueur
-oci_bind_by_name($nivMax, ':id', $_SESSION['id'],10);
-oci_bind_by_name($nivMax, ':r', $nivJ,10);
-oci_execute($nivMax);
+$nivMax =  oci_parse($dbConn,'begin :r := niveau_Joueur(:id); end;'); // obtenir le niveau du joueur
+		oci_bind_by_name($nivMax, ':id', $_SESSION['id'],10);
+		oci_bind_by_name($nivMax, ':r', $nivJ,10);
+		oci_execute($nivMax);
 		
 ?>
 <html>
@@ -50,14 +49,16 @@ oci_execute($nivMax);
 		<?php
 
 		$g=0;
-//Creation d'un formulaire qui affiche les niveaux via des boutons submit : grille 5*10
+		// requête: connaître  le nb max de paires possibles pour utiliser ensuite pour la fin de partie javascript
+		//Creation d'un formulaire qui affiche les niveaux via des boutons submit : grille 5*10
 		for ($ii=0; $ii<5 ; $ii++) { 
 			echo"<tr>";
 			for ($jj=0; $jj<10; $jj++) { 
 				$g++;
 				if ($g <= $nivJ) { 
-					echo"<td> <input type=\"submit\" name ='$g' value ='$g' id=$g /> </td>";
-				}else {
+					echo"<td> <input type=\"submit\" name =\"niveau\" value ='$g' id=$g /> </td>";
+				}
+				else {
 					echo"<td>   $g  </td>";
 				}
 
@@ -65,10 +66,10 @@ oci_execute($nivMax);
 			echo"</tr>";
 		
 		} 
+		
 		?>
 		</form>
-		
 		</table>
+
 	</body>
 </html>
-

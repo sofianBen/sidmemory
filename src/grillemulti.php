@@ -10,11 +10,11 @@ if ( ! oci_execute($stmt) ){
 $err = oci_error($stmt);
 trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
-$niv1 =  oci_parse($dbConn,'begin :r := niveauJoueur(:id); end;'); // obtenir le niveau du joueur
+$niv1 =  oci_parse($dbConn,'begin :r := niveau_Joueur(:id); end;'); // obtenir le niveau du joueur
 		oci_bind_by_name($niv1, ':id', $_SESSION['id'],10);
 		oci_bind_by_name($niv1, ':r', $nivJ1,10);
 		oci_execute($niv1);
-$niv2 =  oci_parse($dbConn,'begin :r := niveauJoueur(:id); end;'); // obtenir le niveau du joueur
+$niv2 =  oci_parse($dbConn,'begin :r := niveau_joueur(:id); end;'); // obtenir le niveau du joueur
 		oci_bind_by_name($niv2, ':id', $_SESSION['id2'],10);
 		oci_bind_by_name($niv2, ':r', $nivJ2,10);
 		oci_execute($niv2);
