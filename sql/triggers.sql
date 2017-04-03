@@ -215,3 +215,34 @@ BEGIN
   
   END;
   /
+  
+  
+  -------------------------------------------------------------------------------
+-- vérifier qu'un coup a bien été produit par un joueur de la partie
+-------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER t_b_i_coup_produit_joueur
+BEFORE INSERT ON Coup
+FOR EACH ROW
+
+DECLARE
+  vId_joueur Joueur.id_joueur%TYPE;
+  vId_joueur2 Joueur.id_joueur%TYPE;
+BEGIN 
+  select id_joueur, id_joueur2 into vId_joueur, vId_joueur2 from Partie where id_partie = :new.id_partie;
+  if vId_joueur2 is not null then 
+    if vId_joueur != :new.id_joueur and vId_joueur2 != :new.id_joueur2 then
+      raise_application_error(-20111,'les deux joueurs ne sont pas dans la partie, ils ne peuvent pas faire de coup');
+    elsif vId_joueur != :new.id_joueur and vId_joueur2 = :new.id_joueur2 then
+      raise_application_error(-20112,'le joueur '||id_joueur_en_pseudo(vId_joueur)||' n''est pas dans la partie, il ne peut pas faire de coup');
+    elsif vId_joueur = :new.id_joueur and vId_joueur2 != :new.id_joueur2 then
+      raise_application_error(-20113,'le joueur '||id_joueur_en_pseudo(vId_joueur2)||' n''est pas dans la partie, il ne peut pas faire de coup');
+    end if;
+  else 
+    if  vId_joueur != :new.id_joueur then
+      raise_application_error(-20111,'le joueur n''est pas dans la partie, il ne peut pas faire de coup');
+    end if;
+  end if;
+  
+END;
+/
+  
