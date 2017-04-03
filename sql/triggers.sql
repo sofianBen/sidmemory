@@ -249,3 +249,28 @@ END;
 INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, 2, 1,  1, 2);
 
   
+-------------------------------------------------------------------------------
+-- vérifier qu'une carte jouée durant un coup corresponde à la partie
+-------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER t_b_i_coup_carte
+BEFORE INSERT ON Coup
+FOR EACH ROW
+
+DECLARE
+  i number := 0;
+  
+BEGIN 
+  for cCarte in (select id_carte from Carte where id_partie = :new.id_partie) loop
+    if cCarte.id_carte = :new.carte1 or cCarte.id_carte = :new.carte2 then
+      i := i + 1;
+    end if;
+  end loop;
+   
+  if i != 2 then
+    raise_application_error(-20114,'les deux cartes ne correspondent pas à la partie');
+  end if;
+  
+END;
+/
+
+INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, 2, 1,  1, 2);
