@@ -579,6 +579,42 @@ END;
 /
 
 
+
+--------------------------------------------------------------------------------------------------------------
+-- creationPartie pour 1 joueur
+--------------------------------------------------------------------------------------------------------------
+create or replace function heure_fin_partie(
+    pId_partie in Partie.id_partie%TYPE)
+    return TIMESTAMP AS
+
+  vTemps Niveau.temps_imparti%type;
+
+BEGIN
+  select temps_imparti into vTemps from Niveau n, Partie p 
+  where n.id_niveau = p.id_niveau
+  and p.id_partie = pId_partie;
+  
+  return CURRENT_TIMESTAMP + vTemps;
+
+EXCEPTION
+  when NO_DATA_FOUND then
+    dbms_output.put_line(pId_partie || ' n''est pas un identifiant de partie.');
+    return null;
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    return null;
+END;
+/
+
+
+-- test
+begin 
+--terminer_partie(3, v);
+DBMS_OUTPUT.put_line(heure_fin_partie(2));
+END;
+/
+
+
 --------------------------------------------------------------------------------------------------------------
 -- Fonction qui retourne la durée d'une partie pour un id_partie donné
 --------------------------------------------------------------------------------------------------------------
