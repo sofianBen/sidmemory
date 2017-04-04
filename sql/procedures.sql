@@ -13,7 +13,6 @@ BEGIN
 
   select pseudo into vPseudo from Joueur where id_joueur = pid_joueur;
   return vPseudo;
-  COMMIT;
 
 EXCEPTION
   when NO_DATA_FOUND then
@@ -29,7 +28,6 @@ END;
 -- test
 begin 
   dbms_output.put_line(id_joueur_en_pseudo(4));
-  COMMIT;
 end ;
 /
 
@@ -50,21 +48,23 @@ create or replace procedure inscription(
   pragma exception_init (e_mail_ck, -2290);
   
 BEGIN
-  insert into Joueur(id_joueur, pseudo, mail, mdp) values(seq_joueur.nextval, pPseudo, pMail, pMdp);
+  insert into Joueur(id_joueur, pseudo, mail, mdp) values(seq_joueur.nextval, pPseudo, pMail, pMdp); 
+  retour := 0; -- authentification réussie
   COMMIT;
-  dbms_output.put_line('Inscription réussie.');
-  retour := 0;
   
 EXCEPTION
   when e_mail_un then
     dbms_output.put_line('L''adresse mail "' || pMail || '" est déjà utilisée, veulliez en choisir une autre.');
     retour := 1;
+    ROLLBACK;
   when e_mail_ck then
     dbms_output.put_line('L''adresse mail "' || pMail || '" est invalide, veuillez la corriger.');
     retour := 2;
+    ROLLBACK;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
     retour := -1; 
+    ROLLBACK;
 END;
 /
 
@@ -74,7 +74,6 @@ declare
 begin 
   inscription('zouzou', 'abc@gmail.com', 'sid', retour);
   dbms_output.put_line(retour);
-  COMMIT;
 end ;
 /
 
@@ -98,22 +97,18 @@ BEGIN
   where mail = pMail
   and mdp = pMdp;
 
-  if vNbCompte = 1 then
-    dbms_output.put_line('Connexion autorisée.');
-    retour := 0;
+  if vNbCompte = 1 then 
+    retour := 0; -- connexion autorisée
   else
     select count(*) into vNbMail from Joueur
     where mail = pMail;
     
     if vNbMail = 1 then
-      dbms_output.put_line('Connexion non autorisée : Mot de passe invalide.');
-      retour := 1;
+      retour := 1; -- connexion non autorisée car mot de passe invalide
     else
-      dbms_output.put_line('Connexion non autorisée : "' || pMail || '" est une adresse mail inconnue.');
-      retour := 2;
+      retour := 2; -- connexion non autorisée car adresse mail inconnue
     end if;
   end if;
-  COMMIT;
   
 EXCEPTION
   when others then
@@ -128,38 +123,47 @@ declare
 begin 
   connexion('abc@gmail.com', 'sid', retour);
   dbms_output.put_line(retour);
-  COMMIT;
 end ;
 /
 
-
-
 --------------------------------------------------------------------------------------------------------------
--- Connaître si les deux cartes retournées sont paires
+-- Savoir si deux cartes sont paires ou non
 --------------------------------------------------------------------------------------------------------------
 create or replace function carte_paire(
 	pid_carte in Carte.id_carte%TYPE,
 	pid_carte2 in Carte.id_carte%TYPE)
 	RETURN NUMBER AS
 	
-	vid_image number;
-	vid_image2 number;
+  vid_image number;
+  vid_image2 number;
+  
+  flag number := 0; --permet de savoir quelle carte a levée l'exception
 	
 BEGIN
-	select id_image into vid_image from Carte
-	where id_carte = pid_carte;
+	select id_image into vid_image from Carte -- sélectionne l'image correspondant à la carte 1 qu'on retourne
+	where id_carte = pid_carte; 
 	
-	select id_image into vid_image2 from Carte
+  flag := 1; -- permet de savoir si l'exception est levée à cause de la carte2
+  
+	select id_image into vid_image2 from Carte -- sélectionne l'image correspondant à la carte 2 qu'on retourne
 	where id_carte = pid_carte2;
 	
 	if vid_image = vid_image2 then
-		RETURN 1;
+		RETURN 1; -- paire de cartes
 	else 
-		RETURN 0;
+		RETURN 0; -- les cartes ne sont pas paires
   end if;
-  COMMIT;
   
 EXCEPTION
+  when NO_DATA_FOUND then
+    if flag = 0 then 
+      dbms_output.put_line('La carte ' || pid_carte || ' n''existe pas.');
+    elsif flag = 1 then
+      dbms_output.put_line('La carte ' || pid_carte2 || ' n''existe pas.');
+    else 
+      dbms_output.put_line('Erreur inconnue de données introuvables');
+    end if;
+    RETURN NULL; 
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
     RETURN NULL; 
@@ -168,10 +172,10 @@ END;
 
 -- test
 begin 
-  dbms_output.put_line(carte_paire(1,2));
-  COMMIT;
+  dbms_output.put_line(carte_paire(3,99));
 end ;
 /
+
 --------------------------------------------------------------------------------------------------------------
 -- Donne le résultat d'une partie
 --------------------------------------------------------------------------------------------------------------
@@ -221,7 +225,6 @@ BEGIN
      return id_joueur_en_pseudo(vid_joueur2);
     end if;
   end if;
-  COMMIT;
   
 EXCEPTION
   when NO_DATA_FOUND then
@@ -235,9 +238,15 @@ END;
 /
 
 
+-- test
+begin 
+  dbms_output.put_line(partie_resultat(1));
+end ;
+/
+
 
 --------------------------------------------------------------------------------------------------------------
--- afficherNiveaux
+-- fonction qui affiche les niveaux auxquels le joueur a accès
 --------------------------------------------------------------------------------------------------------------
 create or replace function niveau_joueur(
     pId_joueur in Joueur.id_joueur%type)
@@ -247,37 +256,32 @@ create or replace function niveau_joueur(
   vNiveau Niveau.id_niveau%type;
   
 BEGIN
-  select xp into vXp
+  select xp into vXp -- sélectionne xp pour le joueur
   from joueur
   where id_joueur = pId_joueur;
   
-  select max(id_niveau) into vNiveau
+  select max(id_niveau) into vNiveau -- sélectionne l'id_niveau max auquel le joueur à droit suivant son xp 
   from niveau
-  where xp_requis <= vXp;
-  
-  dbms_output.put_line('Le joueur ' || pId_joueur || ' peut jouer jusqu''au niveau ' || vNiveau || '.');
+  where xp_requis <= vXp; -- 
+	
   return vNiveau;
-  COMMIT;
   
 EXCEPTION
   when NO_DATA_FOUND then
     dbms_output.put_line(pId_joueur || ' n''est pas un identifiant de joueur.');
-    return -1;
+    return null;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-    return -1; 
+    return null; 
 END;
 /
 
 -- test
 begin 
-  dbms_output.put_line(niveauJoueur(2));
+  dbms_output.put_line(niveau_joueur(652));
 end ;
 /
 
-
-
-set SERVEROUTPUT ON;
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 1 joueur
 --------------------------------------------------------------------------------------------------------------
@@ -304,7 +308,7 @@ create or replace procedure creation_partie_solo(
   i pls_integer := 1; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
 
   fkInexistante exception ;
-  pragma exception_init (fkInexistante , -2291) ;
+  pragma exception_init ( fkInexistante , -2291) ;
 
 BEGIN
   select seq_partie.nextval into rId_partie from dual; -- insère dans la variable rId_partie la valeur de l'Id de la partie qu'on veut créer
@@ -365,7 +369,7 @@ EXCEPTION
 		elsif sqlerrm like '%NIVEAU%' then
 			raise_application_error (-20201 , 'Le niveau '|| pId_niveau || ' n''existe pas. Veuilliez insérer un niveau compris entre 1 et 50.') ;
 		else
-			raise_application_error (-20202 , 'Erreur inconnue de données non trouvées.') ;
+			raise_application_error (-20202 , 'Erreur inconnue de  données non trouvées.') ;
 		end if ;
 		ROLLBACK;
   when others then
@@ -378,16 +382,14 @@ END;
 declare
   ret number;
 begin 
-  creation_partie_solo(50, 2, ret);
+  creation_partie_solo(15, 2, ret);
   DBMS_OUTPUT.PUT_LINE('id_partie : ' || ret);
 end;
 /
 
-
 select id_image from carte
---where id_partie = (select max(id_partie) from partie)
+where id_partie = (select max(id_partie) from partie)
 order by ID_IMAGE;
-
 
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 2 joueurs
@@ -414,11 +416,8 @@ create or replace procedure creation_partie_multi(
   ligne number := 0;
   colonne number := 0;
   i pls_integer := 1; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
-   
-  fkInexistante exception ;
-  pragma exception_init ( fkInexistante , -2291) ;
-  
-  
+
+
 BEGIN
   select seq_partie.nextval into rId_partie from dual; -- insère dans la variable rId_partie la valeur de l'Id de la partie qu'on veut créer
   insert into Partie(id_partie, id_niveau, id_joueur, id_joueur2) values(rId_partie, pId_niveau, pId_joueur, pId_joueur2);
@@ -439,12 +438,11 @@ BEGIN
 
   -- stocker dans un tableau des nombres aléatoires en évitant les doublants
   -- ces nombres seront piochés parmis les 'id_image' de la bonne collection
-  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+(vNb_ligne*vNb_colonne*0.5)))) BULK COLLECT into tabId_image
+  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+vNb_ligne*vNb_colonne*0.5))) BULK COLLECT into tabId_image
   -- on multiplie par 0.5 pour avoir que la moitié des cartes (50 cartes <=> 25 paires)
   from dual
   connect by level <= 500
   order by dbms_random.value;
-
 
   -- on doit placer aléatoirement les cartes sur le plateau de joueur
   select distinct trunc(dbms_random.value(1,(vNb_ligne*vNb_colonne)+1)) BULK COLLECT into tab_emplacement
@@ -452,11 +450,14 @@ BEGIN
   connect by level <= 500
   order by dbms_random.value;
   
+  DBMS_OUTPUT.PUT_LINE(vNb_ligne*vNb_colonne);
+  
   i := 1;
   for lecture in 1..2 loop -- pour lire 2 fois le tableau tabId_image afin de mettre les paires dans les emplacements
     for image in tabId_image.first..tabId_image.last loop
       tab_carte(i) := tabId_image(image);
-      -- dans la table carte à un emplacement aléatoire on place l'image  
+			--DBMS_OUTPUT.PUT_LINE(tab_carte(i));
+      --DBMS_OUTPUT.PUT_LINE(tab_emplacement(i)); -- dans la table carte à un emplacement aléatoire on place l'image  
       i := i + 1; -- on passe à l'emplacement aléatoire suivant
     End loop;
   End loop;
@@ -464,6 +465,7 @@ BEGIN
   i := 1;
   for ligne in 1..vNb_ligne loop
     for colonne in 1..vNb_colonne loop
+      --DBMS_OUTPUT.PUT_LINE(i || ' - ' || ligne || ' - ' || colonne || ' - ' || tab_carte(tab_emplacement(i)));
       insert into Carte values (seq_carte.nextval, ligne, colonne, tab_carte(tab_emplacement(i)), rId_partie); -- stocker la variable de retour à la place de mettre sql_partie.currval
       i := i + 1 ;
     end loop;
@@ -506,55 +508,6 @@ select * from COLLECTION;
 select count(*), id_collection from image group by id_collection;
 select min(id_image), max(id_image) from image where ID_COLLECTION = 5;
 
-
-
-
-
---------------------------------------------------------------------------------------------------------------
--- verification_defaites
---------------------------------------------------------------------------------------------------------------
-
-create or replace function verification_defaites(
-    pId_joueur in Joueur.id_joueur%type)
-    return number as
-    
-  compteur number := 0;
-
-BEGIN
-  for cPartie in(
-      select p.id_partie 
-      from partie p, coup c
-      where p.id_partie = c.id_partie 
-      and c.id_joueur = pId_joueur
-      and heure > current_timestamp - interval '1' HOUR) loop
-    if ((partie_resultat(cPartie.id_partie) <>  id_joueur_en_pseudo(pId_joueur)) or (partie_resultat(cPartie.id_partie) <>  'Egalité')) then
-      compteur := compteur + 1;
-    end if;
-  end loop;
-  
-  if compteur >= 5 then 
-    RAISE_APPLICATION_ERROR(-20001, 'Le joueur ' || id_joueur_en_pseudo(pId_joueur) || ' a perdu 5 partie dans la dernière heure');
-  end if;
-  
-  return 0;
-  
-  COMMIT;
-  
-EXCEPTION
-  when NO_DATA_FOUND then
-    dbms_output.put_line(pid_joueur || ' n''est pas un identifiant de joueur.');
-    return -1;
-END;
-/
-
--- test
-begin 
-  dbms_output.put_line(verification_defaites(1)); -- rajouter des valeurs dans les tables
-end ;
-/
-
-
-
 --------------------------------------------------------------------------------------------------------------
 -- Ajouter un coup 
 --------------------------------------------------------------------------------------------------------------
@@ -573,13 +526,26 @@ BEGIN
   COMMIT;
 
 EXCEPTION
-  -- todo
+  when fkInexistante then
+    ROLLBACK;
+    if sqlerrm like '%PARTIE%' then
+			raise_application_error (-20210, 'L''id de la partie ' || pId_partie || ' n''existe pas.');
+		elsif sqlerrm like '%JOUEUR%' then
+			raise_application_error (-20211, 'L''id du joueur ' || pId_joueur || ' n''existe pas.');
+		elsif sqlerrm like '%CARTE1%' then
+			raise_application_error (-20212, 'La carte '|| pCarte1 || ' n''existe pas.');
+		elsif sqlerrm like '%CARTE2%' then
+			raise_application_error (-20213, 'La carte '|| pCarte2 || ' n''existe pas.');
+		else
+      dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+			raise_application_error (-20214, 'Erreur inconnue de données non trouvées.') ;
+		end if ;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+		ROLLBACK;
     retour := -1; 
 END;
 /
-
 
 
 --------------------------------------------------------------------------------------------------------------
@@ -597,13 +563,14 @@ BEGIN
   from coup where id_partie = pId_partie;
   
   return vDuree;
-	
-  COMMIT;
 
 EXCEPTION
   when NO_DATA_FOUND then
     dbms_output.put_line(pId_partie || ' n''est pas un identifiant de partie.');
     return null;
+	when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+		return null;
 END;
 /
 
@@ -631,13 +598,16 @@ BEGIN
   where id_partie = pId_partie;
   
   return vNb_Coup;
-  COMMIT;
 			
 EXCEPTION
   when NO_DATA_FOUND then
     dbms_output.put_line(pId_partie || ' n''est pas un identifiant de partie.');
     return null;
+	when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+		return null;
 END;
+/
   
 -- test
 begin 
@@ -657,18 +627,21 @@ create or replace function heure_partie(
   
 BEGIN
 
-  select max(heure) into vHeure
+  select max(heure) into vHeure -- heure du dernier coup
   from coup 
   where id_partie = pId_partie;
   
   return vHeure;
-  COMMIT;
 			
 EXCEPTION
   when NO_DATA_FOUND then
     dbms_output.put_line(pId_partie || ' n''est pas un identifiant de partie.');
     return null;
+	when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+		return null;
 END;
+/
   
 -- test
 begin 
