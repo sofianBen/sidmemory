@@ -548,6 +548,37 @@ END;
 /
 
 
+
+--------------------------------------------------------------------------------------------------------------
+-- Procedure qui permet de passer une partie de 'En cours' à 'Terminé'
+--------------------------------------------------------------------------------------------------------------
+create or replace procedure terminer_partie(
+    pId_partie in Partie.id_partie%TYPE,
+    retour out number) AS
+
+  nbPartie number;
+
+BEGIN
+select count(*) into nbPartie from Partie where id_partie = pId_partie;
+
+if nbPartie = 1 then
+  update Partie set etat = 'Terminé' where id_partie = pId_partie;
+  retour := 0;
+  COMMIT;
+else 
+  raise_application_error (-20300 , 'La partie '|| pId_partie || ' n''existe pas.');
+  retour := 1;
+end if;
+
+EXCEPTION
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    retour := 1;
+    ROLLBACK;
+END;
+/
+
+
 --------------------------------------------------------------------------------------------------------------
 -- Fonction qui retourne la durée d'une partie pour un id_partie donné
 --------------------------------------------------------------------------------------------------------------
