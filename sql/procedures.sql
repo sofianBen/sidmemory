@@ -277,6 +277,7 @@ end ;
 
 
 
+set SERVEROUTPUT ON;
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 1 joueur
 --------------------------------------------------------------------------------------------------------------
@@ -291,7 +292,7 @@ create or replace procedure creation_partie_solo(
   vNb_ligne Niveau.nb_ligne%TYPE;
   vNb_colonne Niveau.nb_colonne%TYPE;
   
-  type typ_tab is table of number(2) INDEX BY BINARY_INTEGER; -- déclaration d'un type 'tableau' de nombres aléatoires
+  type typ_tab is table of number INDEX BY BINARY_INTEGER; -- déclaration d'un type 'tableau' de nombres aléatoires
   tabId_image typ_tab; -- déclaration du tableau d'image piochées aléatoirement
   tab_carte typ_tab; -- déclaration du tableau de carte <=> plateau de jeu
   
@@ -302,6 +303,8 @@ create or replace procedure creation_partie_solo(
   colonne number := 0;
   i pls_integer := 1; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
 
+  fkInexistante exception ;
+  pragma exception_init (fkInexistante , -2291) ;
 
 BEGIN
   select seq_partie.nextval into rId_partie from dual; -- insère dans la variable rId_partie la valeur de l'Id de la partie qu'on veut créer
@@ -323,7 +326,7 @@ BEGIN
 
   -- stocker dans un tableau des nombres aléatoires en évitant les doublants
   -- ces nombres seront piochés parmis les 'id_image' de la bonne collection
-  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+vNb_ligne*vNb_colonne*0.5))+1) BULK COLLECT into tabId_image
+  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+vNb_ligne*vNb_colonne*0.5))) BULK COLLECT into tabId_image
   -- on multiplie par 0.5 pour avoir que la moitié des cartes (50 cartes <=> 25 paires)
   from dual
   connect by level <= 500
@@ -335,14 +338,10 @@ BEGIN
   connect by level <= 500
   order by dbms_random.value;
   
-  --DBMS_OUTPUT.PUT_LINE(vNb_ligne*vNb_colonne);
-  
   i := 1;
   for lecture in 1..2 loop -- pour lire 2 fois le tableau tabId_image afin de mettre les paires dans les emplacements
     for image in tabId_image.first..tabId_image.last loop
-      tab_carte(i) := tabId_image(image);
-			--DBMS_OUTPUT.PUT_LINE(tab_carte(i));
-      --DBMS_OUTPUT.PUT_LINE(tab_emplacement(i)); -- dans la table carte à un emplacement aléatoire on place l'image  
+      tab_carte(i) := tabId_image(image); -- dans la table carte à un emplacement aléatoire on place l'image  
       i := i + 1; -- on passe à l'emplacement aléatoire suivant
     End loop;
   End loop;
@@ -350,34 +349,45 @@ BEGIN
   i := 1;
   for ligne in 1..vNb_ligne loop
     for colonne in 1..vNb_colonne loop
-      --DBMS_OUTPUT.PUT_LINE(i || ' - ' || ligne || ' - ' || colonne || ' - ' || tab_carte(tab_emplacement(i)));
-      insert into Carte values (seq_carte.nextval, ligne, colonne, tab_carte(tab_emplacement(i)), rId_partie); -- stocker la variable de retour à la place de mettre sql_partie.currval
+			-- insérer dans la table Carte les cartes que l'on vient de créer
+      insert into Carte values (seq_carte.nextval, ligne, colonne, tab_carte(tab_emplacement(i)), rId_partie); 
+			-- stocker la variable de retour à la place de mettre sql_partie.currval
       i := i + 1 ;
     end loop;
   end loop;
 
   COMMIT;
 			
-EXCEPTION -- à compléter
-  --when todo
+EXCEPTION
+	when fkInexistante then
+		if sqlerrm like '%JOUEUR%' then
+			raise_application_error (-20200, 'L''id du joueur || pId_joueur || n''existe pas.') ;
+		elsif sqlerrm like '%NIVEAU%' then
+			raise_application_error (-20201 , 'Le niveau '|| pId_niveau || ' n''existe pas. Veuilliez insérer un niveau compris entre 1 et 50.') ;
+		else
+			raise_application_error (-20202 , 'Erreur inconnue de données non trouvées.') ;
+		end if ;
+		ROLLBACK;
   when others then
-  dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+  	dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+		ROLLBACK;
 END;
 /
 
-
+--test
 declare
   ret number;
 begin 
-  creation_partie_solo(15, 2, ret);
+  creation_partie_solo(50, 2, ret);
   DBMS_OUTPUT.PUT_LINE('id_partie : ' || ret);
 end;
 /
 
 
 select id_image from carte
-where id_partie = (select max(id_partie) from partie)
+--where id_partie = (select max(id_partie) from partie)
 order by ID_IMAGE;
+
 
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 2 joueurs
@@ -394,7 +404,7 @@ create or replace procedure creation_partie_multi(
   vNb_ligne Niveau.nb_ligne%TYPE;
   vNb_colonne Niveau.nb_colonne%TYPE;
   
-  type typ_tab is table of number(2) INDEX BY BINARY_INTEGER; -- déclaration d'un type 'tableau' de nombres aléatoires
+  type typ_tab is table of number INDEX BY BINARY_INTEGER; -- déclaration d'un type 'tableau' de nombres aléatoires
   tabId_image typ_tab; -- déclaration du tableau d'image piochées aléatoirement
   tab_carte typ_tab; -- déclaration du tableau de carte <=> plateau de jeu
   
@@ -404,8 +414,11 @@ create or replace procedure creation_partie_multi(
   ligne number := 0;
   colonne number := 0;
   i pls_integer := 1; -- rang/place courante dans le tableau (place qui correspondra à une carte par la suite)
-
-
+   
+  fkInexistante exception ;
+  pragma exception_init ( fkInexistante , -2291) ;
+  
+  
 BEGIN
   select seq_partie.nextval into rId_partie from dual; -- insère dans la variable rId_partie la valeur de l'Id de la partie qu'on veut créer
   insert into Partie(id_partie, id_niveau, id_joueur, id_joueur2) values(rId_partie, pId_niveau, pId_joueur, pId_joueur2);
@@ -426,11 +439,12 @@ BEGIN
 
   -- stocker dans un tableau des nombres aléatoires en évitant les doublants
   -- ces nombres seront piochés parmis les 'id_image' de la bonne collection
-  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+vNb_ligne*vNb_colonne*0.5))+1) BULK COLLECT into tabId_image
+  select distinct trunc(dbms_random.value(vMinId_image,(vMinId_image+(vNb_ligne*vNb_colonne*0.5)))) BULK COLLECT into tabId_image
   -- on multiplie par 0.5 pour avoir que la moitié des cartes (50 cartes <=> 25 paires)
   from dual
   connect by level <= 500
   order by dbms_random.value;
+
 
   -- on doit placer aléatoirement les cartes sur le plateau de joueur
   select distinct trunc(dbms_random.value(1,(vNb_ligne*vNb_colonne)+1)) BULK COLLECT into tab_emplacement
@@ -438,14 +452,11 @@ BEGIN
   connect by level <= 500
   order by dbms_random.value;
   
-  DBMS_OUTPUT.PUT_LINE(vNb_ligne*vNb_colonne);
-  
   i := 1;
   for lecture in 1..2 loop -- pour lire 2 fois le tableau tabId_image afin de mettre les paires dans les emplacements
     for image in tabId_image.first..tabId_image.last loop
       tab_carte(i) := tabId_image(image);
-			--DBMS_OUTPUT.PUT_LINE(tab_carte(i));
-      --DBMS_OUTPUT.PUT_LINE(tab_emplacement(i)); -- dans la table carte à un emplacement aléatoire on place l'image  
+      -- dans la table carte à un emplacement aléatoire on place l'image  
       i := i + 1; -- on passe à l'emplacement aléatoire suivant
     End loop;
   End loop;
@@ -453,7 +464,6 @@ BEGIN
   i := 1;
   for ligne in 1..vNb_ligne loop
     for colonne in 1..vNb_colonne loop
-      --DBMS_OUTPUT.PUT_LINE(i || ' - ' || ligne || ' - ' || colonne || ' - ' || tab_carte(tab_emplacement(i)));
       insert into Carte values (seq_carte.nextval, ligne, colonne, tab_carte(tab_emplacement(i)), rId_partie); -- stocker la variable de retour à la place de mettre sql_partie.currval
       i := i + 1 ;
     end loop;
@@ -461,25 +471,41 @@ BEGIN
 
   COMMIT;
 			
-EXCEPTION -- à compléter
-  --when todo
+EXCEPTION
+	when fkInexistante then
+    ROLLBACK;
+    if sqlerrm like '%JOUEUR2%' then
+			raise_application_error (-20200, 'L''id du joueur ' || pId_joueur2 || ' n''existe pas.');
+		elsif sqlerrm like '%JOUEUR%' then
+			raise_application_error (-20201, 'L''id du joueur ' || pId_joueur || ' n''existe pas.');
+		elsif sqlerrm like '%NIVEAU%' then
+			raise_application_error (-20202, 'Le niveau '|| pId_niveau || ' n''existe pas. Veuilliez insérer un niveau compris entre 1 et 50.') ;
+		else
+      dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+			raise_application_error (-20203, 'Erreur inconnue de données non trouvées.') ;
+		end if ;
   when others then
-  dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+  	dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+		ROLLBACK;
 END;
 /
 
+-- test
 declare
   ret number;
 begin 
-  creation_partie_multi(15, 2, 1, ret);
+  creation_partie_multi(50, 1, 2, ret);
   DBMS_OUTPUT.PUT_LINE('id_partie : ' || ret);
 end;
 /
 
+select niveau_joueur(1) from dual;
 
-select id_image from carte
-where id_partie = (select max(id_partie) from partie)
-order by ID_IMAGE;
+select * from niveau;
+select * from COLLECTION;
+select count(*), id_collection from image group by id_collection;
+select min(id_image), max(id_image) from image where ID_COLLECTION = 5;
+
 
 
 
