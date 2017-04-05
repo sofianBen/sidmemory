@@ -581,7 +581,7 @@ END;
 
 
 --------------------------------------------------------------------------------------------------------------
--- creationPartie pour 1 joueur
+-- heure de la fin de la partie 
 --------------------------------------------------------------------------------------------------------------
 create or replace function heure_fin_partie(
     pId_partie in Partie.id_partie%TYPE)
