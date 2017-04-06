@@ -5,9 +5,9 @@ SET SERVEROUTPUT ON;
 --------------------------------------------------------------------------------------------------------------
 create or replace function id_joueur_en_pseudo(
 	pId_joueur in Joueur.id_joueur%TYPE) 
-  return varchar2 AS 
+	return varchar2 AS 
   
-    vPseudo Joueur.pseudo%type;
+vPseudo Joueur.pseudo%type;
 	
 BEGIN
 
