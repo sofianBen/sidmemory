@@ -9,8 +9,8 @@ $strSQL = "select * FROM joueur";
 
 $stmt = oci_parse($dbConn,$strSQL);
 if ( ! oci_execute($stmt) ){
-  $err = oci_error($stmt);
-  trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
+$err = oci_error($stmt);
+trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
 
 ?>
@@ -20,9 +20,9 @@ if ( ! oci_execute($stmt) ){
     <title> Jeu: Memory </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <script src = "index.js"></script>
 
     <link rel="stylesheet" href="index.css">
+
   </head>
 
   <body>
@@ -42,17 +42,16 @@ if ( ! oci_execute($stmt) ){
       </div>
       </br>
       </br>
-      <p> <!-- choix du type de jeu -->
-      <a href="grillemono.php" class="bouton">Partie Mono-joueur </a> 
+      <p>
+      	<a href="grillemono.php" class="bouton">Partie Mono-joueur </a>
       </p>
       <p>
-      <a href="multi.php" class="bouton">Partie Multijoueurs </a>
+      	<a href="multi.php" class="bouton">Partie Multijoueurs </a>
       </p>
 
+
     </div>
-<?php
-echo $_SESSION['id'];
-?>
+
   </body>
 
 </html>
