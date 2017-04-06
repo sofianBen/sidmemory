@@ -66,7 +66,7 @@ if ($nivJ1 > $nivJ2) {
 			for ($jj=0; $jj<10; $jj++) { 
 				$g++;
 				if ($g <= $nivJ) { 
-					echo"<td> <input type=\"submit\" name ='$g' value ='$g' id=$g /> </td>";
+					echo"<td> <input type=\"submit\" name =\"niveau\" value ='$g' id=$g /> </td>";
 				}else {
 					echo"<td>   $g  </td>";
 				}

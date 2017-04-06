@@ -13,6 +13,7 @@ if ( ! oci_execute($stmt) ){
 };
 
 $niveau= $_POST['niveau'];
+$id_j=$_SESSION['id'];
 	
 echo $niveau;
 
@@ -47,67 +48,10 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 		<title> Jeu: Memory </title>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<script src="index.js"></script>
 		<link rel="stylesheet" href="index.css">
-	<script type="text/javascript">
-    
-	var nbCarte=0;
-	var image1;
-	var image2;	
-	var nbCoups=0;
-	var termine=0;
-	var nbPaireMax=0 ;
-	var nbPaire=0;
-	
-	
-	function jouer(a,src,nbPairesM) {
-		nbPaireMax=nbPairesM;
-		// recup pour a + le numero de ligne et colonne où il a clique
-		// alle sur la bd et cherche quelle est la source dans cette ligne et colonne
-		nbCarte ++;
-		if(nbCarte == 1 ){
-			image1 = document.getElementById(a.id);
-			image1.src = src;
-		}
-		else if ( (nbCarte == 2) && (document.getElementById(a.id)!= image1)){
-			image2= document.getElementById(a.id);
-			image2.src = src;
-			window.setTimeout("deuxieme_coup()",1000);			
-		}
-		else{
-			nbCarte=nbCarte-1;
-		}
-	}
+		<script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"> </script>
+		<script src="src.js"></script>
 
-	function deuxieme_coup(){
-		if( image1.src == image2.src){
-			image1.onclick="none";
-			image2.onclick="none";
-			image1.src = "PaireTrouvee.png";
-			image2.src = "PaireTrouvee.png";
-			image1.alt = "Paire Trouvée";
-			image2.alt = "Paire Trouvée";
-			nbPaire+= 1; 
-			finParti(nbPaire);
-
-		}
-		else{
-			image1.src = "face_cache.jpg";
-			image2.src = "face_cache.jpg";
-			
-		}
-		nbCarte=0;
-		nbCoups ++; 
-	}
-
-	function finParti(nbPaireJouee){ 
-		if (nbPaireJouee == nbPaireMax) {
-				alert("La partie est fini, vous avez gagné");
-		} 
-		
-	}
-
-    	</script>
 	</head>
 <body>
 <div id = "base">
@@ -145,7 +89,7 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 			while(oci_fetch($reqsrc)){
 				$src = oci_result($reqsrc,1);
 			}
-			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax')\"> </td>";
+			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax','$id_partie','$id_j')\"> </td>";
 		} 
 		echo"</tr>";
 	}
