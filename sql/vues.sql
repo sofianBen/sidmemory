@@ -22,7 +22,7 @@ order by rownum; -- prends les trois premières catégories de la table catégor
 --------------------------------------------------------------------------------
 -- High Score semaine
 --------------------------------------------------------------------------------
-CREATE OR REPLACE VIEW vue_highscore_semaine
+CREATE OR REPLACE VIEW vue_highscore_semaine AS
   SELECT id_niveau, id_joueur_en_pseudo(id_joueur) pseudo, nb_coup_partie(id_partie) nb_coup, duree_partie(id_partie) duree
   FROM Partie
   WHERE id_joueur2 is null
@@ -42,7 +42,7 @@ CREATE OR REPLACE VIEW vue_highscore_semaine
 -- High Score global
 --------------------------------------------------------------------------------
 
-CREATE OR REPLACE VIEW vue_highscore_global
+CREATE OR REPLACE VIEW vue_highscore_global AS
   SELECT id_niveau, id_joueur_en_pseudo(id_joueur) pseudo, nb_coup_partie(id_partie) nb_coup, duree_partie(id_partie) duree
   FROM Partie
   WHERE id_joueur2 is null

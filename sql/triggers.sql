@@ -162,3 +162,115 @@ BEGIN
 END;
 /
 
+-------------------------------------------------------------------------------
+-- Trigger qui vérifie lors de l'insertion d'un coup que la partie correspondante
+-- est encore en cours
+-------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER t_b_i_coup_blocage
+BEFORE INSERT ON Coup
+FOR EACH ROW
+
+DECLARE
+  vEtat Partie.etat%TYPE;
+BEGIN 
+  select etat into vEtat from partie where id_partie = :new.id_partie;
+  
+  if vEtat = 'Terminé' then
+    RAISE_APPLICATION_ERROR(-20107,'la partie est terminée, vous ne pouvez plus jouer');
+  end if;
+  END;
+  /
+  
+select * from partie;
+
+update partie set etat = 'Terminé'
+where id_partie = 15;
+
+select * from coup;
+
+insert into coup(id_coup,id_partie,id_joueur,carte1,carte2) values(seq_coup.nextval,15,2,1,2);
+
+
+
+-------------------------------------------------------------------------------
+-- Trigger qui vérifie lors de l'insertion d'une partie que le niveau des joueurs correspondent au niveau de la partie
+-------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER t_b_i_partie_correspondance_niveau
+BEFORE INSERT ON Partie
+FOR EACH ROW
+
+DECLARE
+  vNiveauJoueur number := niveau_joueur(:new.id_joueur);
+  vNiveauJoueur2 number;
+BEGIN 
+  if :new.joueur2 is not null then
+    if :new.id_niveau > vNiveauJoueur2 and :new.id_niveau > vNiveauJoueur then
+      raise_application_error(-20100,'les niveaux des deux joueurs ne correspondent pas au niveau de la partie');
+    end if;
+  else 
+    if :new.id_niveau > vNiveauJoueur then
+      raise_application_error(-20101,'le niveau du joueur ne correspond pas au niveau de la partie');
+    end if;
+  end if;
+  
+  END;
+  /
+  
+  
+  -------------------------------------------------------------------------------
+-- vérifier qu'un coup a bien été produit par un joueur de la partie
+-------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER t_b_i_coup_produit_joueur
+BEFORE INSERT ON Coup
+FOR EACH ROW
+
+DECLARE
+  vId_joueur Joueur.id_joueur%TYPE;
+  vId_joueur2 Joueur.id_joueur%TYPE;
+BEGIN 
+  select id_joueur, id_joueur2 into vId_joueur, vId_joueur2 from Partie where id_partie = :new.id_partie;
+  if vId_joueur2 is not null then 
+    if vId_joueur != :new.id_joueur and vId_joueur2 != :new.id_joueur then
+      raise_application_error(-20111,'les deux joueurs ne sont pas dans la partie, ils ne peuvent pas faire de coup');
+    elsif vId_joueur != :new.id_joueur and vId_joueur2 = :new.id_joueur then
+      raise_application_error(-20112,'le joueur '||id_joueur_en_pseudo(vId_joueur)||' n''est pas dans la partie, il ne peut pas faire de coup');
+    elsif vId_joueur = :new.id_joueur and vId_joueur2 != :new.id_joueur then
+      raise_application_error(-20113,'le joueur '||id_joueur_en_pseudo(vId_joueur2)||' n''est pas dans la partie, il ne peut pas faire de coup');
+    end if;
+  else 
+    if  vId_joueur != :new.id_joueur then
+      raise_application_error(-20111,'le joueur '||id_joueur_en_pseudo(vId_joueur)|| ' n''est pas dans la partie, il ne peut pas faire de coup');
+    end if;
+  end if;
+  
+END;
+/
+
+INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, 2, 1,  1, 2);
+
+  
+-------------------------------------------------------------------------------
+-- vérifier qu'une carte jouée durant un coup corresponde à la partie
+-------------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER t_b_i_coup_carte
+BEFORE INSERT ON Coup
+FOR EACH ROW
+
+DECLARE
+  i number := 0;
+  
+BEGIN 
+  for cCarte in (select id_carte from Carte where id_partie = :new.id_partie) loop
+    if cCarte.id_carte = :new.carte1 or cCarte.id_carte = :new.carte2 then
+      i := i + 1;
+    end if;
+  end loop;
+   
+  if i != 2 then
+    raise_application_error(-20114,'les deux cartes ne correspondent pas à la partie');
+  end if;
+  
+END;
+/
+
+INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, 2, 1,  1, 2);

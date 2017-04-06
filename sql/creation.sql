@@ -90,7 +90,8 @@ CREATE TABLE Partie
     CONSTRAINT fk_partie_niveau FOREIGN KEY(id_niveau) REFERENCES Niveau,
     CONSTRAINT fk_partie_joueur FOREIGN KEY(id_joueur) REFERENCES Joueur,
     CONSTRAINT fk_partie_joueur2 FOREIGN KEY(id_joueur2) REFERENCES Joueur,
-    CONSTRAINT ck_partie_etat check(etat in ('En cours', 'Terminé'))
+    CONSTRAINT ck_partie_id_joueur check(id_joueur != id_joueur2),
+    CONSTRAINT ck_partie_etat check(etat in ('En cours', 'TerminÃ©'))
   );
 
 -------------------------------
