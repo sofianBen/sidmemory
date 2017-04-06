@@ -6,8 +6,8 @@ SET SERVEROUTPUT ON;
 create or replace function id_joueur_en_pseudo(
 	pId_joueur in Joueur.id_joueur%TYPE) 
 	return varchar2 AS 
-  
-vPseudo Joueur.pseudo%type;
+
+  vPseudo Joueur.pseudo%type;
 	
 BEGIN
 
@@ -103,9 +103,9 @@ BEGIN
     select count(*) into vNbMail from Joueur
     where mail = pMail;
     
-    if vNbMail = 1 then
-      retour := 1; -- connexion non autorisée car mot de passe invalide
-    else
+  if vNbMail = 1 then
+    retour := 1; -- connexion non autorisée car mot de passe invalide
+  else
       retour := 2; -- connexion non autorisée car adresse mail inconnue
     end if;
   end if;
