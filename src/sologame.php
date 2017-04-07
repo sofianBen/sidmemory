@@ -104,5 +104,9 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 	?>
 	</table>
 
+	<form method='post' action='index.php'>
+		<input type='submit' value='Quitter'>
+	</form>
+
   </body>
 </html>

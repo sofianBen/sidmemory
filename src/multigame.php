@@ -125,6 +125,9 @@ $requetepseudoj2 =  oci_parse($dbConn,'begin :r := id_joueur_en_pseudo(:id); end
 	}
 	?>
 	</table>
+	<form method='post' action='index.php'>
+		<input type='submit' value='Quitter'>
+	</form>
 
   </body>
 </html>
