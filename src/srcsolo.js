@@ -1,4 +1,4 @@
-var nbCarte=0;
+	var nbCarte=0;
 	var image1;
 	var image2;	
 	var nbCoups=0;
@@ -7,21 +7,25 @@ var nbCarte=0;
 	var nbPaire=0;
 	
 	
-	function jouer(a,src,nbPairesM,idpartie,idjoueur1) {
+	function jouer(a,src,nbPairesM,idpartie,idjoueur1,idimage) {
 		idpart=idpartie;
 		idj1=idjoueur1;
 		nbPaireMax=nbPairesM;
+		
 		// recup pour a + le numero de ligne et colonne où il a clique
 		// alle sur la bd et cherche quelle est la source dans cette ligne et colonne
 		nbCarte ++;
 		if(nbCarte == 1 ){
 			image1 = document.getElementById(a.id);
 			image1.src = src;
+			id_image1=idimage;
 		}
 		else if ( (nbCarte == 2) && (document.getElementById(a.id)!= image1)){
 			image2= document.getElementById(a.id);
 			image2.src = src;
-			window.setTimeout("deuxieme_coup()",1000);			
+			id_image2=idimage;
+			window.setTimeout("deuxieme_coup()",1000);
+						
 		}
 		else{
 			nbCarte=nbCarte-1;
@@ -47,7 +51,7 @@ var nbCarte=0;
 		}
 		nbCarte=0;
 		nbCoups ++; 
-		ajoutcoup(idpart,idj1,image1.id,image2.id);
+		ajoutcoup(idpart,idj1,id_image1,id_image2);
 	}
 
 	function finParti(nbPaireJouee,idpart){ 
@@ -60,7 +64,7 @@ var nbCarte=0;
 
 	function ajoutcoup(idp,idj,im1,im2) {
 		$.ajax({
-			url: 'ajoutcou.php',
+			url: 'ajoutcoup.php',
 			type: 'GET',
 			data : 'idpartie=' + encodeURIComponent(idp) + '&idjoueur='+ encodeURIComponent(idj)  + '&carte1='+ encodeURIComponent(im1)  + '&carte2='+ encodeURIComponent(im2),
 			dataType : 'text'

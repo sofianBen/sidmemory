@@ -42,9 +42,18 @@ oci_execute($Colonne);
 while(oci_fetch($Colonne)){
 	$ColonneMax = oci_result($Colonne,1);
 }
-echo $ColonneMax;
-echo $LigneMax;
-$nbPaireMax= ($LigneMax*$ColonneMax)/2;		
+$nbPaireMax= ($LigneMax*$ColonneMax)/2;	
+
+$requetepseudoj1 =  oci_parse($dbConn,'begin :r := id_joueur_en_pseudo(:id); end;'); // obtenir le pseudo du joueur1
+		oci_bind_by_name($requetepseudoj1, ':id', $id_j1,10);
+		oci_bind_by_name($requetepseudoj1, ':r', $pseudoj1,10);
+		oci_execute($requetepseudoj1);
+
+$requetepseudoj2 =  oci_parse($dbConn,'begin :r := id_joueur_en_pseudo(:id); end;'); // obtenir le pseudo du joueur2
+		oci_bind_by_name($requetepseudoj2, ':id', $id_j2,10);
+		oci_bind_by_name($requetepseudoj2, ':r', $pseudoj2,10);
+		oci_execute($requetepseudoj2);
+	
 ?>
 
 <html>
@@ -71,7 +80,8 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
          	 	</ul>
        		</nav>
 		<?php 
-			echo"<p> Joueur 1 :  			 Joueur 2 :  </p>";
+			echo"<p> Joueur 1 : $pseudoj1 </p>
+			<p> Joueur 2 : $pseudoj2  </p>";
 
 		?> 
      		</div>
@@ -99,7 +109,17 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 			while(oci_fetch($reqsrc)){
 				$src = oci_result($reqsrc,1);
 			}
-			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax','$id_partie','$id_j1','$id_j2')\"> </td>";
+
+			$reqidimage =  oci_parse($dbConn,'SELECT id_image FROM CARTE where ligne = :li and colonne = :co and id_partie = :pa');
+			oci_bind_by_name($reqidimage, ':li', $i,5);
+			oci_bind_by_name($reqidimage, ':co', $j,5);
+			oci_bind_by_name($reqidimage, ':pa', $id_partie, 50);
+			oci_execute($reqidimage);
+			while(oci_fetch($reqidimage)){
+				$idimage = oci_result($reqidimage,1);
+			}
+
+			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax','$id_partie','$id_j1','$id_j2','$idimage')\"> </td>";
 		} 
 		echo"</tr>";
 	}

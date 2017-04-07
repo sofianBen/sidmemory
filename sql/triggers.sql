@@ -195,7 +195,7 @@ insert into coup(id_coup,id_partie,id_joueur,carte1,carte2) values(seq_coup.next
 -------------------------------------------------------------------------------
 -- Trigger qui vérifie lors de l'insertion d'une partie que le niveau des joueurs correspondent au niveau de la partie
 -------------------------------------------------------------------------------
-CREATE OR REPLACE TRIGGER t_b_i_partie_correspondance_niveau
+CREATE OR REPLACE TRIGGER t_b_i_partie_corresp_niveau
 BEFORE INSERT ON Partie
 FOR EACH ROW
 

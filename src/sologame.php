@@ -14,8 +14,6 @@ if ( ! oci_execute($stmt) ){
 
 $niveau= $_POST['niveau'];
 $id_j=$_SESSION['id'];
-	
-echo $niveau;
 
 $reqpartie = oci_parse($dbConn, 'begin creation_partie_solo(:pId_niveau, :pId_joueur, :rId_partie); end;');
 
@@ -40,7 +38,8 @@ while(oci_fetch($Colonne)){
 	$ColonneMax = oci_result($Colonne,1);
 }
 
-$nbPaireMax= ($LigneMax*$ColonneMax)/2;		
+$nbPaireMax= ($LigneMax*$ColonneMax)/2;	
+	
 ?> 
 
 <html>
@@ -50,7 +49,7 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<link rel="stylesheet" href="index.css">
 		<script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"> </script>
-		<script src="src.js"></script>
+		<script src="srcsolo.js"></script>
 
 	</head>
 <body>
@@ -79,9 +78,7 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 		echo"<tr>";	
 		for ($j=1; $j<= $ColonneMax; $j++) { 
 			$g++;
-			
 			$reqsrc =  oci_parse($dbConn,'SELECT lien FROM CARTE C, IMAGE I, PARTIE P where C.ligne = :l and C.colonne = :c and P.id_partie = :p and P.id_partie=C.id_partie and I.id_image=C.id_image ');
-
 			oci_bind_by_name($reqsrc, ':l', $i,5);
 			oci_bind_by_name($reqsrc, ':c', $j,5);
 			oci_bind_by_name($reqsrc, ':p', $id_partie, 50);
@@ -89,11 +86,21 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 			while(oci_fetch($reqsrc)){
 				$src = oci_result($reqsrc,1);
 			}
-			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax','$id_partie','$id_j')\"> </td>";
+
+			$reqidimage =  oci_parse($dbConn,'SELECT id_image FROM CARTE where ligne = :li and colonne = :co and id_partie = :pa');
+			oci_bind_by_name($reqidimage, ':li', $i,5);
+			oci_bind_by_name($reqidimage, ':co', $j,5);
+			oci_bind_by_name($reqidimage, ':pa', $id_partie, 50);
+			oci_execute($reqidimage);
+			while(oci_fetch($reqidimage)){
+				$idimage = oci_result($reqidimage,1);
+			}
+	
+			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax','$id_partie','$id_j','$idimage')\"> </td>";
 		} 
 		echo"</tr>";
+		
 	}
-	
 	?>
 	</table>
 

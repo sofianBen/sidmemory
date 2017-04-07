@@ -22,14 +22,16 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <script src = "index.js"></script>
+
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="index.css">
   </head>
 
   <body>
-    <div id = "base"> 
+    <div id = "base">
       <h1 class = "centrer"> Memory </h1>
 
-      <div id= "menu"> <!-- code du menu -->
+      <div id= "menu">
         <nav>
           <ul class="top-menu">
             <li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
