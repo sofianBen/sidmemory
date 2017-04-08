@@ -612,7 +612,7 @@ BEGIN
       vXP1 := vXP1 + 10 - mod(vXP1, 10);
       
       update Joueur
-      set xp = xp + 10 - mod(xp, 10); -- mise à jour de l'xp du joueur. mod(xp, 10) permet d'arrondir les valeurs d'xp à des dizaines
+      set xp = xp + 10 - mod(xp, 10) where id_joueur = vId_joueur; -- mise à jour de l'xp du joueur. mod(xp, 10) permet d'arrondir les valeurs d'xp à des dizaines
 
       select id_categorie into vCateg from Categorie
       where vXP1 >= xp_min
