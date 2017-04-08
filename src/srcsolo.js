@@ -7,7 +7,7 @@
 	var nbPaire=0;
 	
 	
-	function jouer(a,src,nbPairesM,idpartie,idjoueur1,idimage) {
+	function jouer(a,src,nbPairesM,idpartie,idjoueur1,idcarte) {
 		idpart=idpartie;
 		idj1=idjoueur1;
 		nbPaireMax=nbPairesM;
@@ -18,12 +18,12 @@
 		if(nbCarte == 1 ){
 			image1 = document.getElementById(a.id);
 			image1.src = src;
-			id_image1=idimage;
+			id_carte1=idcarte;
 		}
 		else if ( (nbCarte == 2) && (document.getElementById(a.id)!= image1)){
 			image2= document.getElementById(a.id);
 			image2.src = src;
-			id_image2=idimage;
+			id_carte2=idcarte;
 			window.setTimeout("deuxieme_coup()",1000);
 						
 		}
@@ -51,22 +51,22 @@
 		}
 		nbCarte=0;
 		nbCoups ++; 
-		ajoutcoup(idpart,idj1,id_image1,id_image2);
+		ajoutcoup(idpart,idj1,id_carte1,id_carte2);
 	}
 
-	function finParti(nbPaireJouee,idpart){ 
+	function finParti(nbPaireJouee,idpart){
 		if (nbPaireJouee == nbPaireMax) {
 				termineparti(idpart);
 				alert("La partie est fini, vous avez gagné");
 		} 
 		
 	}
-
-	function ajoutcoup(idp,idj,im1,im2) {
+	
+	function ajoutcoup(idp,idj,ic1,ic2) {
 		$.ajax({
 			url: 'ajoutcoup.php',
 			type: 'GET',
-			data : 'idpartie=' + encodeURIComponent(idp) + '&idjoueur='+ encodeURIComponent(idj)  + '&carte1='+ encodeURIComponent(im1)  + '&carte2='+ encodeURIComponent(im2),
+			data : 'idpartie=' + encodeURIComponent(idp) + '&idjoueur='+ encodeURIComponent(idj)  + '&carte1='+ encodeURIComponent(ic1)  + '&carte2='+ encodeURIComponent(ic2),
 			dataType : 'text'
 		});
 	}
@@ -79,4 +79,3 @@
 			dataType : 'text'
 		});
 	}
-

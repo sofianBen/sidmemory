@@ -33,10 +33,11 @@ $nivMax =  oci_parse($dbConn,'begin :r := niveau_Joueur(:id); end;'); // obtenir
         	<nav>
           		<ul class="top-menu">
            			<li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
-            			<li><a href="jouer.php">Jouer</a><div class="menu-item" id="item2"></div></li>
-            			<li><a href="regles.php">Regles</a><div class="menu-item" id="item3"></div></li>
-            			<li><a href="classement.php">Classement</a><div class="menu-item" id="item4"></div></li>
-            			<li><a href="deconnexion.php">Deconnection</a><div class="menu-item" id="item5"></div></li>
+						<li><a href="jouer.php">Jouer</a><div class="menu-item" id="item2"></div></li>
+						<li><a href="regles.php">Regles</a><div class="menu-item" id="item3"></div></li>
+						<li><a href="classement.php">Classement</a><div class="menu-item" id="item4"></div></li>
+						<li><a href="historique.php">Historique</a><div class="menu-item" id="item5"></div></li>
+						<li><a href="deconnexion.php">Se deconnecter</a><div class="menu-item" id="item6"></div></li>
          	 	</ul>
        		</nav>
      		</div>

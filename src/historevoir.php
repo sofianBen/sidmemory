@@ -12,31 +12,28 @@ if ( ! oci_execute($stmt) ){
 	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
 
-$niveau= $_POST['niveau'];
-$id_j=$_SESSION['id'];
-
-$reqpartie = oci_parse($dbConn, 'begin creation_partie_solo(:pId_niveau, :pId_joueur, :rId_partie); end;');
-
-oci_bind_by_name($reqpartie, ':pId_niveau', $niveau,5);
-oci_bind_by_name($reqpartie, ':pId_joueur', $_SESSION['id'],50);
-oci_bind_by_name($reqpartie, ':rId_partie', $id_partie, 50);
-
-oci_execute($reqpartie);
-oci_free_statement($reqpartie);
+$id_j= $_SESSION['id'];
+$_SESSION['idpart']= $_POST['choix']; // on obtient le choix du niveau de la partie du joueur
+$id_p= $_SESSION['idpart']; 
 
 $Ligne=  oci_parse($dbConn,'SELECT nb_ligne FROM Partie P, Niveau  N where P.id_partie =:partie and P.id_Niveau = N.id_Niveau');
-oci_bind_by_name($Ligne, ':partie', $id_partie, 50);
+oci_bind_by_name($Ligne, ':partie', $id_p, 50);
 oci_execute($Ligne);
 while(oci_fetch($Ligne)){
 	$LigneMax = oci_result($Ligne,1);
 }
 
 $Colonne=  oci_parse($dbConn,'SELECT nb_colonne FROM Partie P, Niveau  N where P.id_partie =:part and P.id_Niveau = N.id_Niveau');
-oci_bind_by_name($Colonne, ':part', $id_partie, 50);
+oci_bind_by_name($Colonne, ':part', $id_p, 50);
 oci_execute($Colonne);
 while(oci_fetch($Colonne)){
 	$ColonneMax = oci_result($Colonne,1);
 }
+
+$reqnbcoup=oci_parse($dbConn,'begin :r := nb_coup_partie(:pid_partie); end;'); // obtenir le nb de coup de la partie
+oci_bind_by_name($reqnbcoup, ':pid_partie', $id_p,10);
+oci_bind_by_name($reqnbcoup, ':r', $nbcoup,10);
+oci_execute($reqnbcoup);
 
 $nbPaireMax= ($LigneMax*$ColonneMax)/2;	
 	
@@ -48,8 +45,6 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<link rel="stylesheet" href="index.css">
-		<script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"> </script>
-		<script src="srcsolo.js"></script>
 
 	</head>
 <body>
@@ -67,6 +62,24 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 						<li><a href="deconnexion.php">Se deconnecter</a><div class="menu-item" id="item6"></div></li>
          	 	</ul>
        		</nav>
+	<form method="post" action="historevoirbis.php">
+		<p>
+			<label for="choixcoup">Quel coup souhaitez vous ?</label>
+			<br/>
+			<select name="choixcoup">
+				<?php
+				$reqcoup = oci_parse($dbConn,'SELECT id_coup FROM Coup WHERE id_partie=:idpartie order by id_coup asc');
+				oci_bind_by_name($reqcoup, ':idpartie', $id_p,5);
+				oci_execute($reqcoup);
+				while(oci_fetch($reqcoup)){
+					$idcoup = oci_result($reqcoup, 1);
+					echo "<option value='$idcoup'>$idcoup</option>";
+				}
+				?>
+			</select>
+		</p>
+		<input type="submit" name="valide" value="Valider">
+	</form>
   	<table>
 	<?php	
 
@@ -79,25 +92,8 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 		echo"<tr>";	
 		for ($j=1; $j<= $ColonneMax; $j++) { 
 			$g++;
-			$reqsrc =  oci_parse($dbConn,'SELECT lien FROM CARTE C, IMAGE I, PARTIE P where C.ligne = :l and C.colonne = :c and P.id_partie = :p and P.id_partie=C.id_partie and I.id_image=C.id_image ');
-			oci_bind_by_name($reqsrc, ':l', $i,5);
-			oci_bind_by_name($reqsrc, ':c', $j,5);
-			oci_bind_by_name($reqsrc, ':p', $id_partie, 50);
-			oci_execute($reqsrc);
-			while(oci_fetch($reqsrc)){
-				$src = oci_result($reqsrc,1);
-			}
-
-			$reqidcarte =  oci_parse($dbConn,'SELECT id_carte FROM CARTE where ligne = :li and colonne = :co and id_partie = :pa');
-			oci_bind_by_name($reqidcarte, ':li', $i,5);
-			oci_bind_by_name($reqidcarte, ':co', $j,5);
-			oci_bind_by_name($reqidcarte, ':pa', $id_partie, 50);
-			oci_execute($reqidcarte);
-			while(oci_fetch($reqidcarte)){
-				$idcarte = oci_result($reqidcarte,1);
-			}
-	
-			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax','$id_partie','$id_j','$idcarte')\"> </td>";
+			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" </td>";
+			
 		} 
 		echo"</tr>";
 		

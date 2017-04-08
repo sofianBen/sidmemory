@@ -14,6 +14,7 @@ if ( ! oci_execute($stmt) ){
 };
 
 
+
 ?>
 
 <html>
@@ -30,7 +31,7 @@ if ( ! oci_execute($stmt) ){
 			<div id= "menu">
 				<nav>
 					<ul class="top-menu">
-						<li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
+					<li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
 						<li><a href="jouer.php">Jouer</a><div class="menu-item" id="item2"></div></li>
 						<li><a href="regles.php">Regles</a><div class="menu-item" id="item3"></div></li>
 						<li><a href="classement.php">Classement</a><div class="menu-item" id="item4"></div></li>
@@ -41,42 +42,24 @@ if ( ! oci_execute($stmt) ){
 			</div>
 			<table>
 				
-				<form method="post" action="classemaine.php">
+				<form method="post" action="historevoir.php">
 					<p>
-						<label for="choix">Quel niveau souhaitez vous ?</label><br/>
+						<label for="choix">Quelle partie souhaitez vous revoir?</label><br/>
 					
 						<select name="choix">
 							<?php
-							for ($i=1; $i<= 50; $i++) { 
-								echo "<option value='$i'>$i</option>";
+							$choixpartie = oci_parse($dbConn,'SELECT id_partie FROM Partie WHERE id_joueur=:idj order by id_partie asc');
+							oci_bind_by_name($choixpartie, ':idj', $_SESSION['id'],5);
+							oci_execute($choixpartie);
+							while(oci_fetch($choixpartie)){
+								$idpartie = oci_result($choixpartie, 1);
+								echo "<option value='$idpartie'>$idpartie</option>";
 							}
 							?>
 						</select>
 					</p>
 					<input type="submit" name="valide" value="Valider">
 				</form>
-
-				<tr>
-					<th>Pseudos</th>
-					<th>Nombre de Coups</th>
-					<th>Durée</th>
-				</tr>
-
-				<?php
-				$niveau= $_POST['choix'];
-				$classemai = oci_parse($dbConn,'SELECT pseudo,nb_coup,duree FROM vue_highscore_semaine WHERE id_niveau=:niv and rownum <= 10 order by rownum');
-				oci_bind_by_name($classemai, ':niv', $niveau,5);
-				oci_execute($classemai);
-				while(oci_fetch($classemai)){
-					$pseudo = oci_result($classemai, 1);
-					$nbcoup = oci_result($classemai, 2);
-					$duree = oci_result($classemai, 3);
-					print "<tr><td>".$pseudo."</td>";
-					print "<td>".$nbcoup."</td>";
-					print "<td>".$duree."</td></tr>";
-				}
-				?>
-
 			</table>
 		</div>
 	</body>

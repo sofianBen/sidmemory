@@ -14,7 +14,7 @@ var nbPaireMax=0 ;
 //si c'est la deuxième on vérifie qu'il ne s'agit de la même que la première si c'est le cas l'utilisateur doit en choisir une autre sinon elle se retourne et déclanche la fonction paire
 //Sortie : Deux cartes retournées
 
-function jouer(a,src,nbPaire,idpartie,idjoueur1,idjoueur2,idimage) {
+function jouer(a,src,nbPaire,idpartie,idjoueur1,idjoueur2,idcarte) {
 	idpart=idpartie;
 	idj1=idjoueur1;
 	idj2=idjoueur2;
@@ -25,12 +25,12 @@ function jouer(a,src,nbPaire,idpartie,idjoueur1,idjoueur2,idimage) {
 	if(nbCarte == 1 ){
 		image1 = document.getElementById(a.id);
 		image1.src = src;
-		id_image1=idimage;
+		id_carte1=idcarte;
 	}
 	else if ( (nbCarte == 2) && (document.getElementById(a.id)!= image1)){
 		image2= document.getElementById(a.id);
 		image2.src = src;
-		id_image2=idimage;
+		id_carte2=idcarte;
 		window.setTimeout("deuxieme_coup()",1000);			
 	}
 	else{
@@ -49,11 +49,11 @@ function deuxieme_coup(){
 		image2.alt = "Paire Trouvée";
 		if (Joueur == Joueur1){
 			nbPaireJoueur1 += 1; 
-			ajoutcoup(idpart,idj1,id_image1,id_image2);
+			ajoutcoup(idpart,idj1,id_carte1,id_carte2);
 		}
 		else{
 		nbPaireJoueur2 += 1; 
-			ajoutcoup(idpart,idj2,id_image1,id_image2);
+			ajoutcoup(idpart,idj2,id_carte1,id_carte2);
 		}
 		finParti(nbPaireJoueur1,nbPaireJoueur2,idpart);
 			
@@ -62,11 +62,11 @@ function deuxieme_coup(){
 		image1.src = "face_cache.jpg";
 		image2.src = "face_cache.jpg";
 		if (Joueur == Joueur1){
-			ajoutcoup(idpart,idj1,id_image1,id_image2); 
+			ajoutcoup(idpart,idj1,id_carte1,id_carte2); 
 			Joueur = 0;
 			alert("C'est au joueur2 de jouer");
 		}else {
-			ajoutcoup(idpart,idj2,id_image1,id_image2);
+			ajoutcoup(idpart,idj2,id_carte1,id_carte2);
 			Joueur = 1;
 			alert("C'est au joueur1 de jouer");
 		}
@@ -93,11 +93,11 @@ function finParti(nbPaireJ1, nbPaireJ2,idpart){
 	} 		
 }
 	
-function ajoutcoup(idp,idj,im1,im2) {
+function ajoutcoup(idp,idj,ic1,ic2) {
 	$.ajax({
 		url: 'ajoutcoup.php',
 		type: 'GET',
-		data : 'idpartie=' + encodeURIComponent(idp) + '&idjoueur='+ encodeURIComponent(idj)  + '&carte1='+ encodeURIComponent(im1)  + '&carte2='+ encodeURIComponent(im2),
+		data : 'idpartie=' + encodeURIComponent(idp) + '&idjoueur='+ encodeURIComponent(idj)  + '&carte1='+ encodeURIComponent(ic1)  + '&carte2='+ encodeURIComponent(ic2),
 		dataType : 'text'
 	});
 }
