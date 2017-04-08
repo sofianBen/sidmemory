@@ -15,10 +15,10 @@ if(isset($_POST['forminscription'])) {
 
   if(!empty($_POST['mail']) AND !empty($_POST['mdp']) ) { // si tout les champs sont remplis alors:
 
-    $mail = htmlspecialchars($_POST['mail']); // htmlspecialchars permet de voir si le format du mail est bien saisie et on stocke dans la variable $mail le mail saisi
+    $mail = htmlspecialchars($_POST['mail']); // htmlspecialchars l'utilisateur ne peut pas mettre de balise et on stocke dans la variable $mail le mail saisi
     $mdp = sha1($_POST['mdp']); // shail permet de sécuriser le mdp, on stocke dans la variable $mdp le mot de passe saisi
 
-    $reqpseudo = oci_parse($dbConn, 'begin connexion(:mail, :mdp, :r); end;'); // requête SQL pour utiliser la procédure de la connexion qui nous permet de se connecter ou d'afficher un message d'erreur si problème dans les données saisies par le joueur.
+    $reqpseudo = oci_parse($dbConn, 'begin connexion(:mail, :mdp, :r); end;'); // requête SQL pour utiliser la procédure de la connexion qui nous permet de se connecter ou d'afficher un message d'erreur si problème dans les données saisies par le joueur
     oci_bind_by_name($reqpseudo, ':mail', $mail,50);
     oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
     oci_bind_by_name($reqpseudo, ':r', $r, 10);
@@ -57,7 +57,6 @@ if(isset($_POST['forminscription'])) {
     <title> Jeu: Memory </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <script src="index.js"></script>
     <link rel="stylesheet" href="index.css">
   </head>
 
@@ -76,14 +75,14 @@ if(isset($_POST['forminscription'])) {
       <h2>Connexion</h2>
       <br /><br />
 
-      <form method="POST" action=""> <!-- formulaire d'inscription -->
+      <form method="POST" action=""> <!-- formulaire de connexion -->
         <table>
           <tr>
             <td align="right">
               <label for="mail">Mail :</label>
             </td>
             <td>
-              <input type="text" placeholder="Votre mail" id="mail" name="mail" value="<?php if(isset($mail)) { echo $mail; } ?>" />
+              <input type="text" placeholder="Votre mail" id="mail" name="mail" value="<?php if(isset($mail)) { echo $mail; } ?>" /> <!-- champ à remplir pour le mail-->
             </td>
           </tr>
           <tr>
@@ -91,7 +90,7 @@ if(isset($_POST['forminscription'])) {
               <label for="mdp">Mot de passe :</label>
             </td>
             <td>
-              <input type="password" placeholder="Votre mot de passe" id="mdp" name="mdp" />
+              <input type="password" placeholder="Votre mot de passe" id="mdp" name="mdp" /> <!-- champ à remplir pour le mot de passe-->
             </td>
           </tr>
           <tr>
@@ -102,7 +101,7 @@ if(isset($_POST['forminscription'])) {
           </tr>
         </table>
       </form> 
-      <!-- Affiche le message d'erreur-->
+      <!-- Affichage le message d'erreur-->
       <?php
       if(isset($erreur)) {
         echo $erreur;

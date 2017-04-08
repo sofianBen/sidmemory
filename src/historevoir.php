@@ -25,7 +25,7 @@ while(oci_fetch($Ligne)){
 }
 
 $Colonne=  oci_parse($dbConn,'SELECT nb_colonne FROM Partie P, Niveau  N where P.id_partie =:part and P.id_Niveau = N.id_Niveau');
-// requête SQL pour obtenir le nb ligne de colonne qui a été joué
+// requête SQL pour obtenir le nb de colonne de la partie qui a été joué
 oci_bind_by_name($Colonne, ':part', $id_p, 50);
 oci_execute($Colonne);
 while(oci_fetch($Colonne)){
@@ -45,7 +45,6 @@ oci_execute($reqnbcoup);
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<link rel="stylesheet" href="index.css">
-
 	</head>
 	<body>
 		<div id = "base">

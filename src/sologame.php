@@ -12,19 +12,19 @@ if ( ! oci_execute($stmt) ){
 	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
 
-$niveau= $_POST['niveau'];
-$id_j=$_SESSION['id'];
+$niveau= $_POST['niveau']; // on stocke l'id du niveau selectionner dans notre formulaire ans la varaible $niveau
+$id_j=$_SESSION['id']; // on stocke l'id du joueur1 dans la varaible $id_j1
 
 $reqpartie = oci_parse($dbConn, 'begin creation_partie_solo(:pId_niveau, :pId_joueur, :rId_partie); end;');
-
+// requête SQL qui fait appel à la requête creation_partie_solo qui permet de créer une partie mono
 oci_bind_by_name($reqpartie, ':pId_niveau', $niveau,5);
 oci_bind_by_name($reqpartie, ':pId_joueur', $_SESSION['id'],50);
 oci_bind_by_name($reqpartie, ':rId_partie', $id_partie, 50);
-
 oci_execute($reqpartie);
 oci_free_statement($reqpartie);
 
 $Ligne=  oci_parse($dbConn,'SELECT nb_ligne FROM Partie P, Niveau  N where P.id_partie =:partie and P.id_Niveau = N.id_Niveau');
+// requête SQL pour obtenir le nb ligne de la partie
 oci_bind_by_name($Ligne, ':partie', $id_partie, 50);
 oci_execute($Ligne);
 while(oci_fetch($Ligne)){
@@ -32,12 +32,13 @@ while(oci_fetch($Ligne)){
 }
 
 $Colonne=  oci_parse($dbConn,'SELECT nb_colonne FROM Partie P, Niveau  N where P.id_partie =:part and P.id_Niveau = N.id_Niveau');
+// requête SQL pour obtenir le nb colonne de la partie
 oci_bind_by_name($Colonne, ':part', $id_partie, 50);
 oci_execute($Colonne);
 while(oci_fetch($Colonne)){
 	$ColonneMax = oci_result($Colonne,1);
 }
-
+// calcul du nombre de paire possible
 $nbPaireMax= ($LigneMax*$ColonneMax)/2;	
 	
 ?> 
@@ -48,66 +49,72 @@ $nbPaireMax= ($LigneMax*$ColonneMax)/2;
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<link rel="stylesheet" href="index.css">
-		<script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"> </script>
+		<script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"> </script> <!-- pour utiliser ajax -->
 		<script src="srcsolo.js"></script>
 
 	</head>
-<body>
-<div id = "base">
-		<h1 class = "centrer"> Memory </h1>
-		<!-- code du menu -->
+
+	<body>
+		<div id = "base">
+			<h1 class = "centrer"> Memory </h1>
+			<!-- code du menu -->
       		<div id= "menu">
-        	<nav>
-          		<ul class="top-menu">
-           			<li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
+        		<nav>
+          			<ul class="top-menu">
+           				<li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
 						<li><a href="jouer.php">Jouer</a><div class="menu-item" id="item2"></div></li>
 						<li><a href="regles.php">Regles</a><div class="menu-item" id="item3"></div></li>
 						<li><a href="classement.php">Classement</a><div class="menu-item" id="item4"></div></li>
 						<li><a href="historique.php">Historique</a><div class="menu-item" id="item5"></div></li>
 						<li><a href="deconnexion.php">Se deconnecter</a><div class="menu-item" id="item6"></div></li>
-         	 	</ul>
-       		</nav>
-  	<table>
-	<?php	
+         	 		</ul>
+       			</nav>
+       		</div>
 
-	// lancer une procedure qui remplis pour l'id partie aléatoirement l'emplacement des cartes
-	// récuperer à travers cette procedure, l'id partie pour ensuite faire un select sur cet id partie
+       		</br> <!-- saut de ligne -->
+			</br> <!-- saut de ligne -->
 
-	$g=0;
-	// recuperer le niveau, nb de ligne et colonnes
-	for ($i=1; $i<=$LigneMax; $i++) { 
-		echo"<tr>";	
-		for ($j=1; $j<= $ColonneMax; $j++) { 
-			$g++;
-			$reqsrc =  oci_parse($dbConn,'SELECT lien FROM CARTE C, IMAGE I, PARTIE P where C.ligne = :l and C.colonne = :c and P.id_partie = :p and P.id_partie=C.id_partie and I.id_image=C.id_image ');
-			oci_bind_by_name($reqsrc, ':l', $i,5);
-			oci_bind_by_name($reqsrc, ':c', $j,5);
-			oci_bind_by_name($reqsrc, ':p', $id_partie, 50);
-			oci_execute($reqsrc);
-			while(oci_fetch($reqsrc)){
-				$src = oci_result($reqsrc,1);
-			}
+  			<table>
+			<?php	
+			// affichage de la grille du jeu
+			$g=0;
+			for ($i=1; $i<=$LigneMax; $i++) { 
+				echo"<tr>";	
+				for ($j=1; $j<= $ColonneMax; $j++) { 
+					$g++;
+					$reqsrc =  oci_parse($dbConn,'SELECT lien FROM CARTE C, IMAGE I, PARTIE P where C.ligne = :l and C.colonne = :c and P.id_partie = :p and P.id_partie=C.id_partie and I.id_image=C.id_image ');
+					// On récupère la source chaque carte de la partie à travers une requête SQL
+					oci_bind_by_name($reqsrc, ':l', $i,5);
+					oci_bind_by_name($reqsrc, ':c', $j,5);
+					oci_bind_by_name($reqsrc, ':p', $id_partie, 50);
+					oci_execute($reqsrc);
+					while(oci_fetch($reqsrc)){
+						$src = oci_result($reqsrc,1);
+					}
 
-			$reqidcarte =  oci_parse($dbConn,'SELECT id_carte FROM CARTE where ligne = :li and colonne = :co and id_partie = :pa');
-			oci_bind_by_name($reqidcarte, ':li', $i,5);
-			oci_bind_by_name($reqidcarte, ':co', $j,5);
-			oci_bind_by_name($reqidcarte, ':pa', $id_partie, 50);
-			oci_execute($reqidcarte);
-			while(oci_fetch($reqidcarte)){
-				$idcarte = oci_result($reqidcarte,1);
-			}
-	
-			echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax','$id_partie','$id_j','$idcarte')\"> </td>";
-		} 
-		echo"</tr>";
+					$reqidcarte =  oci_parse($dbConn,'SELECT id_carte FROM CARTE where ligne = :li and colonne = :co and id_partie = :pa');// On récupère l'identifiant de chaque carte de la partie à travers une requête SQL
+					oci_bind_by_name($reqidcarte, ':li', $i,5);
+					oci_bind_by_name($reqidcarte, ':co', $j,5);
+					oci_bind_by_name($reqidcarte, ':pa', $id_partie, 50);
+					oci_execute($reqidcarte);
+					while(oci_fetch($reqidcarte)){
+						$idcarte = oci_result($reqidcarte,1);
+					}
+
+					// affichage de l'image d'une carte retourné et si on clique dessus alors appel à la fonction jouer du javascript (srcmono.js)
+					echo"<td> <img id='$g' height=\"100px\" width=\"100px\" alt= \"Memory\" src = \"face_cache.jpg\" width = \"100\" onclick=\"jouer(this,'$src','$nbPaireMax','$id_partie','$id_j','$idcarte')\"> </td>";
+				} 
+				echo"</tr>";
 		
-	}
-	?>
-	</table>
+			}
 
-	<form method='post' action='index.php'>
-		<input type='submit' value='Quitter'>
-	</form>
+			?>
+			</table>
 
-  </body>
+			<form method='post' action='index.php'><!-- bouton pour quitter la page, qui vous redirigera vers la page d'acceuil (index.php) -->
+				<input type='submit' value='Quitter'>
+			</form>
+		</div>
+	</body>
+
 </html>

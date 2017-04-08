@@ -45,7 +45,6 @@ oci_execute($reqnbcoup);
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<link rel="stylesheet" href="index.css">
-
 	</head>
 	<body>
 		<div id = "base">

@@ -19,8 +19,6 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
     <title> Jeu: Memory </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <script src = "index.js"></script>
-
     <link rel="stylesheet" href="index.css">
   </head>
 
