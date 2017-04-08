@@ -8,6 +8,7 @@ CREATE OR REPLACE VIEW vue_highscore_jour AS
   FROM Partie
   WHERE id_joueur2 is null
   AND heure_partie(id_partie) > CURRENT_TIMESTAMP - INTERVAL '1' DAY -- depuis les dernières 24h
+  AND etat = 'Terminé'
   ORDER BY 3, 4; -- trié par nb_coup et duréed de la partie
 
 
@@ -27,6 +28,7 @@ CREATE OR REPLACE VIEW vue_highscore_semaine AS
   FROM Partie
   WHERE id_joueur2 is null
   AND heure_partie(id_partie) > CURRENT_TIMESTAMP - INTERVAL '7' DAY
+  AND etat = 'Terminé'
   ORDER BY 3, 4;
 
 
@@ -46,6 +48,7 @@ CREATE OR REPLACE VIEW vue_highscore_global AS
   SELECT id_niveau, id_joueur_en_pseudo(id_joueur) pseudo, nb_coup_partie(id_partie) nb_coup, duree_partie(id_partie) duree
   FROM Partie
   WHERE id_joueur2 is null
+  AND etat = 'Terminé'
   ORDER BY 3, 4;
 
 
