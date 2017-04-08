@@ -298,6 +298,7 @@ begin
 end ;
 /
 
+
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 1 joueur
 --------------------------------------------------------------------------------------------------------------
@@ -381,31 +382,31 @@ BEGIN
 EXCEPTION
   when fkInexistante then
     if sqlerrm like '%JOUEUR%' then
-      raise_application_error (-20200, 'L''id du joueur || pId_joueur || n''existe pas.') ;
+      DBMS_OUTPUT.PUT_LINE('L''id joueur ' || pId_joueur || ' n''existe pas.') ;
     elsif sqlerrm like '%NIVEAU%' then
-      raise_application_error (-20201 , 'Le niveau '|| pId_niveau || ' n''existe pas. Veuilliez insérer un niveau compris entre 1 et 50.') ;
+      DBMS_OUTPUT.PUT_LINE('Le niveau '|| pId_niveau || ' n''existe pas. Veuilliez insérer un niveau compris entre 1 et 50.') ;
     else
-      raise_application_error (-20202 , 'Erreur inconnue de  données non trouvées.') ;
+      DBMS_OUTPUT.PUT_LINE('Erreur inconnue de  données non trouvées.') ;
     end if ;
+    rId_partie := null;
     ROLLBACK;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    rId_partie := null;
     ROLLBACK;
 END;
 /
+
+select * from partie order by 1;
 
 --test
 declare
   ret number;
 begin
-  creation_partie_solo(15, 2, ret);
+  creation_partie_solo(3, 2, ret);
   DBMS_OUTPUT.PUT_LINE('id_partie : ' || ret);
 end;
 /
-
-select id_image from carte
-where id_partie = (select max(id_partie) from partie)
-order by ID_IMAGE;
 
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 2 joueurs
@@ -468,8 +469,6 @@ BEGIN
   connect by level <= 500
   order by dbms_random.value;
 
-  DBMS_OUTPUT.PUT_LINE(vNb_ligne*vNb_colonne);
-
   i := 1;
   for lecture in 1..2 loop -- pour lire 2 fois le tableau tabId_image afin de mettre les paires dans les emplacements
     for image in tabId_image.first..tabId_image.last loop
@@ -495,17 +494,18 @@ EXCEPTION
   when fkInexistante then
     ROLLBACK;
     if sqlerrm like '%JOUEUR2%' then
-      raise_application_error (-20200, 'L''id du joueur ' || pId_joueur2 || ' n''existe pas.');
+      DBMS_OUTPUT.PUT_LINE('L''id joueur ' || pId_joueur2 || ' n''existe pas.');
     elsif sqlerrm like '%JOUEUR%' then
-      raise_application_error (-20201, 'L''id du joueur ' || pId_joueur || ' n''existe pas.');
+      DBMS_OUTPUT.PUT_LINE('L''id joueur ' || pId_joueur || ' n''existe pas.');
     elsif sqlerrm like '%NIVEAU%' then
-      raise_application_error (-20202, 'Le niveau '|| pId_niveau || ' n''existe pas. Veuilliez insérer un niveau compris entre 1 et 50.') ;
+      DBMS_OUTPUT.PUT_LINE('Le niveau '|| pId_niveau || ' n''existe pas. Veuilliez insérer un niveau compris entre 1 et 50.') ;
     else
-      dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-      raise_application_error (-20203, 'Erreur inconnue de données non trouvées.') ;
+      DBMS_OUTPUT.PUT_LINE('Erreur de clé étrangère inconnue : ' || sqlerrm);
     end if ;
+    rId_partie := null;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    rId_partie := null;
     ROLLBACK;
 END;
 /
@@ -525,6 +525,7 @@ select * from niveau;
 select * from COLLECTION;
 select count(*), id_collection from image group by id_collection;
 select min(id_image), max(id_image) from image where ID_COLLECTION = 5;
+select * from Carte order by 5;
 
 --------------------------------------------------------------------------------------------------------------
 -- Ajouter un coup
@@ -537,7 +538,7 @@ create or replace procedure insert_coup(
     retour out number) AS
 
   fkInexistante exception ;
-  pragma exception_init ( fkInexistante , -2291) ;
+  pragma exception_init (fkInexistante , -2291) ;
 
 BEGIN
   INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, pId_partie, pId_joueur,  pCarte1, pCarte2);
@@ -549,28 +550,38 @@ EXCEPTION
   when fkInexistante then
     ROLLBACK;
     if sqlerrm like '%PARTIE%' then
-      raise_application_error (-20210, 'L''id de la partie ' || pId_partie || ' n''existe pas.');
+      DBMS_OUTPUT.PUT_LINE('L''id de la partie ' || pId_partie || ' n''existe pas.');
     elsif sqlerrm like '%JOUEUR%' then
-      raise_application_error (-20211, 'L''id du joueur ' || pId_joueur || ' n''existe pas.');
+      DBMS_OUTPUT.PUT_LINE('L''id du joueur ' || pId_joueur || ' n''existe pas.');
     elsif sqlerrm like '%CARTE1%' then
-      raise_application_error (-20212, 'La carte '|| pCarte1 || ' n''existe pas.');
+      DBMS_OUTPUT.PUT_LINE('La carte '|| pCarte1 || ' n''existe pas.');
     elsif sqlerrm like '%CARTE2%' then
-      raise_application_error (-20213, 'La carte '|| pCarte2 || ' n''existe pas.');
+      DBMS_OUTPUT.PUT_LINE('La carte '|| pCarte2 || ' n''existe pas.');
     else
-      dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-      raise_application_error (-20214, 'Erreur inconnue de données non trouvées.') ;
+      DBMS_OUTPUT.PUT_LINE('Erreur de clé étrangère inconnue : ' || sqlerrm);
     end if ;
+    retour := null;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
     ROLLBACK;
-    retour := -1;
+    retour := null;
 END;
 /
 
+-- test
+declare 
+  retour number;
+begin
+  insert_coup(140,1,4, 3, retour);
+  DBMS_OUTPUT.put_line(retour);
+end;
+/
+  
+select * from Carte where id_partie = 140;
 
 
 --------------------------------------------------------------------------------------------------------------
--- Procedure qui permet de passer une partie de 'En cours' à 'Terminé'
+-- permet de passer une partie de 'En cours' à 'Terminé'
 --------------------------------------------------------------------------------------------------------------
 create or replace procedure terminer_partie(
     pId_partie in Partie.id_partie%TYPE,
@@ -587,17 +598,25 @@ if nbPartie = 1 then
   COMMIT;
 else
   raise_application_error (-20300 , 'La partie '|| pId_partie || ' n''existe pas.');
-  retour := 1;
+  retour := NULL;
 end if;
 
 EXCEPTION
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-    retour := 1;
+    retour := NULL;
     ROLLBACK;
 END;
 /
 
+-- test
+declare 
+  retour number;
+begin
+  terminer_partie(150,retour);
+  DBMS_OUTPUT.put_line(retour);
+end;
+/
 
 
 --------------------------------------------------------------------------------------------------------------
