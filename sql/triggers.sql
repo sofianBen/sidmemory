@@ -259,7 +259,7 @@ END;
 
 INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, 2, 1,  1, 2);
 
-  
+
 -------------------------------------------------------------------------------
 -- vérifier qu'une carte jouée durant un coup corresponde à la partie
 -------------------------------------------------------------------------------
@@ -272,16 +272,26 @@ DECLARE
   
 BEGIN 
   for cCarte in (select id_carte from Carte where id_partie = :new.id_partie) loop
-    if cCarte.id_carte = :new.carte1 or cCarte.id_carte = :new.carte2 then
+    if (cCarte.id_carte = :new.carte1) or (cCarte.id_carte = :new.carte2) then
       i := i + 1;
     end if;
   end loop;
    
   if i != 2 then
-    raise_application_error(-20114,'les deux cartes ne correspondent pas à la partie');
+    raise_application_error(-20114,'les deux cartes ne correspondent pas à la partie : ');
   end if;
   
 END;
 /
 
-INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, 2, 1,  1, 2);
+-- test
+declare 
+  n number;
+begin
+  CREATION_PARTIE_SOLO(1, 1, n);
+  INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) 
+  VALUES (seq_coup.NEXTVAL, n, 1,  (select max(id_carte)-1 from Carte where id_partie = (select max(id_partie) from Partie)), (select max(id_carte) from Carte where id_partie = (select max(id_partie) from Partie)));
+end;
+/
+
+select * from coup where id_partie = (select max(id_partie) from partie);
