@@ -13,10 +13,11 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 };
 
 if(isset($_POST['forminscription'])) {
-
-  if(!empty($_POST['mail']) AND !empty($_POST['mdp']) ) { // si tout les champs sont remplis alors:
-    $mail = htmlspecialchars($_POST['mail']); // htmlspecialchars l'utilisateur ne peut pas mettre de balise et on stocke dans la variable $mail le mail saisi
+	$mail = htmlspecialchars($_POST['mail']); // htmlspecialchars l'utilisateur ne peut pas mettre de balise et on stocke dans la variable $mail le mail saisi
     $mdp = sha1($_POST['mdp']); // shail permet de sécuriser le mdp, on stocke dans la variable $mdp le mot de passe saisi
+  if(!empty($_POST['mail']) AND !empty($_POST['mdp']) ) { // si tout les champs sont remplis alors:
+    $mail = $_POST['mail'];
+    $mdp = $_POST['mdp'];
     
     $reqpseudo = oci_parse($dbConn, 'begin connexion(:mail, :mdp, :r); end;');// requête SQL pour utiliser la procédure de la connexion qui nous permet de se connecter ou d'afficher un message d'erreur si problème dans les données saisies par le joueur2
     oci_bind_by_name($reqpseudo, ':mail', $mail,50);
