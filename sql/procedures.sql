@@ -587,21 +587,148 @@ create or replace procedure terminer_partie(
     pId_partie in Partie.id_partie%TYPE,
     retour out number) AS
 
-  nbPartie number;
+  vCateg Categorie.id_categorie%type;
+  vXP1 Joueur.xp%type;
+  vXP2 Joueur.xp%type;
+  vDiffXP number;
+  vId_joueur Partie.id_joueur%type;
+  vId_joueur2 Partie.id_joueur%type;
+  
 
 BEGIN
-  select count(*) into nbPartie from Partie where id_partie = pId_partie;
-
-if nbPartie = 1 then
+  select id_joueur, id_joueur2 into vId_joueur, vId_joueur2 from Partie where id_partie = pId_partie;
+  
   update Partie set etat = 'Terminé' where id_partie = pId_partie;
+
+
+  if vId_joueur2 is null then -- cas partie mono-joueur
+    if partie_resultat(pId_partie) = id_joueur_en_pseudo(vId_joueur) then -- si la parie est gagnée
+      -- partie_resultat : retourne le pseudo du gagnant si le joueur a gagner ou 'Perdu' sinon
+      -- on compare ce résultat avec le pseudo du joueur
+      select xp into vXP1
+      from Joueur
+      where id_joueur = vId_joueur;
+      
+      vXP1 := vXP1 + 10 - mod(vXP1, 10);
+      
+      update Joueur
+      set xp = xp + 10 - mod(xp, 10); -- mise à jour de l'xp du joueur. mod(xp, 10) permet d'arrondir les valeurs d'xp à des dizaines
+
+      select id_categorie into vCateg from Categorie
+      where vXP1 >= xp_min
+      and vXP1 <= xp_max;
+
+      update Joueur
+      set id_categorie = vCateg
+      where id_joueur = vId_joueur;
+    end if;
+
+  else -- cas partie multi-joueur
+    -- requete pour savoir quel est le joueur qui a l'xp le plus important
+    select J1.xp, J2.xp into vXP1, vXP2
+    from Joueur J1, Joueur J2
+    where J1.id_joueur = vId_joueur
+    and J2.id_joueur = vId_joueur2;
+
+    vDiffXP := vXP2-vXP1; -- différence d'xp entre les joueurs pour mettre à jour les xp de manière "juste"
+    -- quel joueur a gagné
+    -- retour de la proc partie_resultat
+    if partie_resultat(pId_partie) = id_joueur_en_pseudo(vId_joueur) then -- dans le cas où c'est le joueur 1 qui a gagné
+      if vDiffXP>=9 then
+        vXP1 := vXP1 + 8;
+        update Joueur set xp = xp + 8 where id_joueur = vId_joueur; -- rajoute 9 points maximum (10 points nécessaires au max pour changer de niveau)
+      elsif vDiffXP>0 then -- rajoute la diff entre les deux joueurs si supèrieur à 0 mais infèrieur à 9
+        vXP1 := vXP1 + vDiffXP + 1;
+        update Joueur set xp = xp + vDiffXP + 1 where id_joueur = vId_joueur;
+      elsif vDiffXP = 0 then
+        vXP1 := vXP1 + 2;
+        update Joueur set xp = xp + 2 where id_joueur = vId_joueur; -- rajoute 2 points si les joueurs ont la même expérience
+      else
+        vXP1 := vXP1 + 1;
+        update Joueur set xp = xp + 1 where id_joueur = vId_joueur; -- rajoute un point d'xp si infèrieur à 0
+      end if;
+
+      select id_categorie into vCateg from Categorie
+      where vXP1 >= xp_min
+      and vXP1 <= xp_max;
+
+      update Joueur
+      set id_categorie = vCateg
+      where id_joueur = vId_joueur;
+
+    elsif partie_resultat(pId_partie) = id_joueur_en_pseudo(vId_joueur2) then -- cas où c'est le joueur 2 qui a gagné
+      if vDiffXP>=9 then
+        vXP2 := vXP2 + 8;
+        update Joueur set xp = xp + 8 where id_joueur = vId_joueur2;
+      elsif vDiffXP>0 then
+        vXP2 := vXP2 + vDiffXP + 1;
+        update Joueur set xp = xp + vDiffXP + 1 where id_joueur = vId_joueur2;
+      elsif vDiffXP = 0 then
+        vXP2 := vXP2 + 2;
+        update Joueur set xp = xp + 2 where id_joueur = vId_joueur2;
+      else
+        vXP2 := vXP2 + 1;
+        update Joueur set xp = xp + 1 where id_joueur = vId_joueur2;
+      end if;
+
+      select id_categorie into vCateg from Categorie
+      where vXP2 >= xp_min
+      and vXP2 <= xp_max;
+
+      update Joueur
+      set id_categorie = vCateg
+      where id_joueur = vId_joueur2;
+
+    else -- en cas d'égalité de la partie (les deux 'gagnent à moitié')
+      if vDiffXP>=9 then
+        vXP1 := vXP1 + 4;
+        vXP2 := vXP2 + 1;
+        update Joueur set xp = vXP1 where id_joueur = vId_joueur;
+        update Joueur set xp = vXP2 where id_joueur = vId_joueur2;
+      elsif vDiffXP>0 then
+        vXP1 := vXP1 + (floor(0.5*vDiffXP)+1);
+        vXP2 := vXP2 + 2;
+        update Joueur set xp = vXP1 where id_joueur = vId_joueur;
+        update Joueur set xp = vXP2 where id_joueur = vId_joueur2;
+      elsif vDiffXP = 0 then
+        vXP1 := vXP1 + 2;
+        vXP2 := vXP2 + (floor(0.5*vDiffXP)+1);
+        update Joueur set xp = vXP1 where id_joueur = vId_joueur;
+        update Joueur set xp = vXP2 where id_joueur = vId_joueur2;
+      else
+        vXP1 := vXP1 + 1;
+        vXP2 := vXP2 + 4;
+        update Joueur set xp = vXP1 where id_joueur = vId_joueur;
+        update Joueur set xp = vXP2 where id_joueur = vId_joueur2;
+      end if;
+
+      select id_categorie into vCateg from Categorie
+      where vXP1 >= xp_min
+      and vXP1 <= xp_max;
+
+      update Joueur
+      set id_categorie = vCateg
+      where id_joueur = vId_joueur;
+
+      select id_categorie into vCateg from Categorie
+      where vXP2 >= xp_min
+      and vXP2 <= xp_max;
+
+      update Joueur
+      set id_categorie = vCateg
+      where id_joueur = vId_joueur2;
+
+    end if;
+  end if;
+  
   retour := 0;
   COMMIT;
-else
-  raise_application_error (-20300 , 'La partie '|| pId_partie || ' n''existe pas.');
-  retour := NULL;
-end if;
-
+  
 EXCEPTION
+   when NO_DATA_FOUND then
+    dbms_output.put_line('La partie ' || pId_partie || ' n''existe pas.');
+    retour := NULL;
+    ROLLBACK;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
     retour := NULL;
@@ -613,11 +740,12 @@ END;
 declare 
   retour number;
 begin
-  terminer_partie(150,retour);
+  terminer_partie(8,retour);
   DBMS_OUTPUT.put_line(retour);
 end;
 /
 
+select * from Partie;
 
 --------------------------------------------------------------------------------------------------------------
 -- heure de la fin de la partie
