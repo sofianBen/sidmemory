@@ -40,9 +40,9 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
           </ul>
         </nav>
       </div>
-      <img src = "memory.jpg" width = 400 alt="memory">
+      <img src = "memory.jpg" width = 400 alt="memory"> <!-- ajout de l'image du memory -->
 
-      <div id = "milieu" class = "centrer">
+      <div id = "milieu" class = "centrer"> <!-- Texte sur les créateurs du site -->
         <div id = "centre">
           <p class = "centrer"><strong>Créateurs</strong>: Céline, Claire, Camille et Sofian</p>
           <p class = "centrer"> Etudiant de  l'Université Paul Sabatier (<a href="https://www.google.fr/maps/place/120+rue+de+Narbonne+31400+toulouse" target="_blank">plan</a>)</p>

@@ -28,6 +28,7 @@ if ( ! oci_execute($stmt) ){
 	<body>
 		<div id = "base">
 			<h1 class = "centrer"> Memory </h1>
+			<!-- code du menu -->
 			<div id= "menu">
 				<nav>
 					<ul class="top-menu">
@@ -42,12 +43,13 @@ if ( ! oci_execute($stmt) ){
 			</div>
 			<table>
 				
-				<form method="post" action="historevoir.php">
+				<form method="post" action="historevoir.php"><!-- formulaire pour connaître la partie que le joueur veut voir qui renverra vers la page où on choisit le coup que l'on souhaite revoir(historevoir.php) -->
 					<p>
 						<label for="choix">Quelle partie souhaitez vous revoir?</label><br/>
 					
 						<select name="choix">
 							<?php
+							// requête SQL pour récupérer tout les id_partie que le joueur a joué
 							$choixpartie = oci_parse($dbConn,'SELECT id_partie FROM Partie WHERE id_joueur=:idj order by id_partie asc');
 							oci_bind_by_name($choixpartie, ':idj', $_SESSION['id'],5);
 							oci_execute($choixpartie);
@@ -58,7 +60,7 @@ if ( ! oci_execute($stmt) ){
 							?>
 						</select>
 					</p>
-					<input type="submit" name="valide" value="Valider">
+					<input type="submit" name="valide" value="Valider"> <!-- bouton pour valider le choix du joueur -->
 				</form>
 			</table>
 		</div>
