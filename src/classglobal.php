@@ -29,7 +29,7 @@ if ( ! oci_execute($stmt) ){
 			<h1 class = "centrer"> Memory </h1>
 			<div id= "menu">
 				<nav>
-					<ul class="top-menu">
+					<ul class="top-menu"> <!-- code du menu-->
 						<li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
 						<li><a href="jouer.php">Jouer</a><div class="menu-item" id="item2"></div></li>
 						<li><a href="regles.php">Regles</a><div class="menu-item" id="item3"></div></li>
@@ -40,7 +40,7 @@ if ( ! oci_execute($stmt) ){
 				</nav>
 			</div>
 			<table>
-				
+				<!-- Début de la liste déroulante pour choisir le classement du niveau que le joueur souhaite voir-->
 				<form method="post" action="classglobal.php">
 					<p>
 						<label for="choix">Quel niveau souhaitez vous ?</label><br/>
@@ -48,14 +48,15 @@ if ( ! oci_execute($stmt) ){
 						<select name="choix">
 							<?php
 							for ($i=1; $i<= 50; $i++) { 
-								echo "<option value='$i'>$i</option>";
+								echo "<option value='$i'>$i</option>"; // ajout des 50 niveaux dans la liste déroulante à l'aide d'une boucle for 
 							}
 							?>
 						</select>
 					</p>
-					<input type="submit" name="valide" value="Valider">
+					<input type="submit" name="valide" value="Valider"> <!-- bouton valider le choix de l'utilisateur-->
 				</form>
 
+				<!-- Tableau du classement global, qui sera en trois colonnes: Pseudos, Nombre de coups et Durée -->
 				<tr>
 					<th>Pseudos</th>
 					<th>Nombre de Coups</th>
@@ -63,17 +64,17 @@ if ( ! oci_execute($stmt) ){
 				</tr>
 
 				<?php
-				$niveau= $_POST['choix'];
-				$classgloba = oci_parse($dbConn,'SELECT pseudo,nb_coup,duree FROM vue_highscore_global WHERE id_niveau=:niv and rownum <= 10 order by rownum');
+				$niveau= $_POST['choix']; // on récupère le choix du niveau que le joueur a fait dans la liste déroulante 
+				$classgloba = oci_parse($dbConn,'SELECT pseudo,nb_coup,duree FROM vue_highscore_global WHERE id_niveau=:niv and rownum <= 10 order by rownum'); // On récupère nos pseudo, nombre de coup et duree de notre vue pour le classement global à travers une requête SQL
 				oci_bind_by_name($classgloba, ':niv', $niveau,5);
 				oci_execute($classgloba);
-				while(oci_fetch($classgloba)){
-					$pseudo = oci_result($classgloba, 1);
-					$nbcoup = oci_result($classgloba, 2);
-					$duree = oci_result($classgloba, 3);
-					print "<tr><td>".$pseudo."</td>";
-					print "<td>".$nbcoup."</td>";
-					print "<td>".$duree."</td></tr>";
+				while(oci_fetch($classgloba)){ // Pour chaque ligne de notre requête on:
+					$pseudo = oci_result($classgloba, 1); // récupère le pseudo de notre requête SQL
+					$nbcoup = oci_result($classgloba, 2); // récupère le nb coup de notre requête SQL
+					$duree = oci_result($classgloba, 3); // récupère la durée de notre requête SQL
+					print "<tr><td>".$pseudo."</td>"; // et on affiche e pseudo
+					print "<td>".$nbcoup."</td>"; // on affiche le nb de coups
+					print "<td>".$duree."</td></tr>"; // on affiche la durée de la partie
 				}
 				?>
 

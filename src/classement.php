@@ -30,7 +30,7 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
 
       <div id= "menu">
         <nav>
-          <ul class="top-menu">
+          <ul class="top-menu"> <!-- code du menu -->
             <li><a href="index.php">Accueil</a><div class="menu-item" id="item1"></div></li>
 						<li><a href="jouer.php">Jouer</a><div class="menu-item" id="item2"></div></li>
 						<li><a href="regles.php">Regles</a><div class="menu-item" id="item3"></div></li>
@@ -42,13 +42,13 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
       </div>
       </br>
       </br>
-      <p>
+      <p> <!-- bouton pour voir le classement global-->
       <a href="classglobal.php" class="bouton">Classement global </a>
       </p>
-      <p>
+      <p> <!-- bouton pour voir le classement de la semaine-->
       <a href="classemaine.php" class="bouton">Classement semaine </a>
       </p>
-      <p>
+      <p> <!-- bouton pour voir le classement du jour-->
       <a href="classjour.php" class="bouton">Classement du jour </a>
       </p>
 

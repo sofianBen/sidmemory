@@ -13,50 +13,43 @@ if ( ! oci_execute($stmt) ){
 
 if(isset($_POST['forminscription'])) {
 
-   $mail = htmlspecialchars($_POST['mail']);
-   $mdp = sha1($_POST['mdp']); // permet de sécuriser le mdp
+  if(!empty($_POST['mail']) AND !empty($_POST['mdp']) ) { // si tout les champs sont remplis alors:
 
-   if(!empty($_POST['mail']) AND !empty($_POST['mdp']) ) {
+    $mail = htmlspecialchars($_POST['mail']); // htmlspecialchars permet de voir si le format du mail est bien saisie et on stocke dans la variable $mail le mail saisi
+    $mdp = sha1($_POST['mdp']); // shail permet de sécuriser le mdp, on stocke dans la variable $mdp le mot de passe saisi
 
-     $mail = $_POST['mail'];
-     $mdp = $_POST['mdp'];
+    $reqpseudo = oci_parse($dbConn, 'begin connexion(:mail, :mdp, :r); end;'); // requête SQL pour utiliser la procédure de la connexion qui nous permet de se connecter ou d'afficher un message d'erreur si problème dans les données saisies par le joueur.
+    oci_bind_by_name($reqpseudo, ':mail', $mail,50);
+    oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
+    oci_bind_by_name($reqpseudo, ':r', $r, 10);
+    oci_execute($reqpseudo);
+    oci_free_statement($reqpseudo);
 
-     $reqpseudo = oci_parse($dbConn, 'begin connexion(:mail, :mdp, :r); end;');
-
-     oci_bind_by_name($reqpseudo, ':mail', $mail,50);
-     oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
-     oci_bind_by_name($reqpseudo, ':r', $r, 10);
-
-     oci_execute($reqpseudo);
-
-     oci_free_statement($reqpseudo);
-     $erreur = $r; 
-
-	if($r == 0) {
-	$id =  oci_parse($dbConn,'select id_joueur from Joueur where mail = :mail');
-		oci_bind_by_name($id, ':mail', $_POST['mail'],50);
-		oci_execute($id);
-		while(oci_fetch($id)){
-			
-			$idjoueur = oci_result($id,1);
-		}
-		$_SESSION['id'] = $idjoueur;
-		header("Location: index.php");
-	}
-	else if($r == 1){
-	$erreur = " Connexion non autorisée: Mot de passe invalide ";
-	}
-	else if($r == 2){
-	$erreur = " Connexion non autorisée: adresse mail inconnue";
-	}
-	else{
-	$erreur = " Erreur ! ";
-	}
-
-	} else {      
-	$erreur = "Tous les champs doivent être complétés !";
-   	}
+    if($r == 0) { // si la procédure connexion à renvoyer un retour=0 alors le joueur peut se connecter
+      $id =  oci_parse($dbConn,'select id_joueur from Joueur where mail = :mail'); // requête SQL pour récupérer l'id du joueur car il se connecte avec son mail
+		  oci_bind_by_name($id, ':mail', $_POST['mail'],50);
+		  oci_execute($id);
+		  while(oci_fetch($id)){
+			 $idjoueur = oci_result($id,1);
+		  }
+		  $_SESSION['id'] = $idjoueur; // on stocke dans la mémoire de la session l'id du joueur qui est connecté
+		  header("Location: index.php"); // permet de rediriger le joueur sur la page d'acceuil (index.php) quand la connexion ne rencontre aucun problème
+    }
+    else if($r == 1){ // si la procédure connexion à renvoyer un retour=1 alors le mot de passe saisi est mauvais
+      $erreur = " Connexion non autorisée: Mot de passe invalide ";
+    }
+    else if($r == 2){ // si la procédure connexion à renvoyer un retour=2 alors le mail saisi est mauvais
+      $erreur = " Connexion non autorisée: adresse mail inconnue";
+    }
+    else{  // si la procédure connexion à renvoyer un retour différent de 0,1 et 2 alors on affiche qu'il s'agit d'une erreur inconnu 
+      $erreur = " Erreur ! ";
+    }
+  } 
+  else { // si tout les champs n'ont pas été remplis alors message d'erreur qui s'affiche 
+    $erreur = "Tous les champs doivent être complétés !";
+  }
 }
+
 ?>
 
 <html>
@@ -73,7 +66,7 @@ if(isset($_POST['forminscription'])) {
       <h1 class = "centrer"> Memory </h1>
       <div id= "menu">
         <nav>
-          <ul class="top-menu">
+          <ul class="top-menu"> <!-- code du menu avec deux onglets: inscription et connexion-->
             <li><a href="inscription.php">S'inscrire</a><div class="menu-item" id="item5"></div></li>
             <li><a href="connexion.php">Se connecter</a><div class="menu-item" id="item6"></div></li>
           </ul>
@@ -83,7 +76,7 @@ if(isset($_POST['forminscription'])) {
       <h2>Connexion</h2>
       <br /><br />
 
-      <form method="POST" action="">
+      <form method="POST" action=""> <!-- formulaire d'inscription -->
         <table>
           <tr>
             <td align="right">
@@ -104,11 +97,12 @@ if(isset($_POST['forminscription'])) {
           <tr>
             <td align="center">
               <br />
-              <input type="submit" name="forminscription" value="Se connecter" />
+              <input type="submit" name="forminscription" value="Se connecter" /> <!-- bouton pour valider son formulaire-->
             </td>
           </tr>
         </table>
-      </form>
+      </form> 
+      <!-- Affiche le message d'erreur-->
       <?php
       if(isset($erreur)) {
         echo $erreur;
