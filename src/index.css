@@ -1,48 +1,53 @@
-html {
+html { /* "margin" et "padding" vont nous permettre de jouer sur les marges externes et internes de notre page*/
 	margin: 10px;
 	padding: 10px;
 }
-body {
-	font-family: Comic Sans MS ;
-	font-size: 12pt;
-	margin: 0 auto;
+
+body { /* sur le corps du texte */
+	font-family: Comic Sans MS; /* écriture en Comic Sans MS */
+	font-size: 12pt; /* permet de définir la taille de fonte utilisée pour le texte */
+	margin: 0 auto; /* auto : pour centrer horizontallement cet élément à l'intérieur de son conteneur */
 	padding: 10px;
-	width: 1300px;
-	background-color: #B9121B;
+	width: 1300px; /* définit la largeur de la zone dédiée au contenu d'un élément */
+	background-color: #B9121B; /* coulour de fond  */
 }
 
-#base{
-	background-color: white;
-	overflow: hidden;
+#base{ /* div base */
+	background-color: white; /* coulour de fond en blanc */
 	padding: 1em;
-	-webkit-box-shadow: 0px 0px 5px 5px #6F6D79;
-	box-shadow: 0px 0px 5px 5px #6F6D79;
-	-moz-box-shadow: 0px 0px 5px 5px #6F6D79;
-  text-align: center;
-}
-
-
-#milieu {
-	height: 100px;
-	margin-bottom: 10px;
-}
-
-#centre {
-	display: inline-block;
-	width: 760px;
-	vertical-align: top;
-}
-#centre p {
-	line-height: 10px;
-}
-
-.centrer {
 	text-align: center;
 }
 
-/* propriete de base du menu */
-nav {width: 960px;height: 100px;margin: 30px auto;	text-align: center;display: block;font-family: Comic Sans MS,arial;}
 
+#milieu { /* div milieu */
+	height: 100px;
+	margin-bottom: 10px; /* marge externes du bouton  */
+}
+
+#centre { /* div centre */
+	display: inline-block; 
+	width: 760px; /* définit la largeur de la zone dédiée au contenu d'un élément */
+	vertical-align: top;
+}
+#centre p { /* div centre et balise p */
+	line-height: 10px; /* texte aligné au centre */
+}
+
+.centrer { /* div centrer */
+	text-align: center;
+}
+
+/* propriete de la balise nav */
+nav {
+	width: 960px;
+	height: 100px;
+	margin: 30px auto;	
+	text-align: center; /* texte aligné au centre */
+	display: block;
+	font-family: Comic Sans MS; /* écriture en Comic Sans MS */
+}
+
+/* couleur de nos six onglets */
 #item1 { background: #41D05F; }
 #item2 { background: #E42B2B; }
 #item3 { background: #ff8400; }
@@ -51,10 +56,11 @@ nav {width: 960px;height: 100px;margin: 30px auto;	text-align: center;display: b
 #item6 { background: #283593; }
 
 
-.top-menu li {display: inline-block;text-align: center;margin: 10px 5px;position: relative;
--webkit-transition: all 0.3s ease;
--moz-transition: all 0.3s ease;
--o-transition: all 0.3s ease;
+.top-menu li { /* balise li de notre menu d'onglets */
+	display: inline-block;text-align: center;margin: 10px 5px;position: relative;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
 }
 .top-menu li:hover {margin: 10px 20px; } /* taille du mouvement quand on passe sur l'icone */
 .top-menu li:active {margin: 10px 33px; } /* taille du mouvement quand on appuye sur l'icone */
@@ -66,8 +72,8 @@ text-shadow: 0px 1px 1px rgba(0,0,0,0.4), 0px 4px 6px rgba(0,0,0,0.1), 0px 9px 1
 -webkit-transition: all 0.15s linear; /* rapidité quand on appuye sur l'icone */
 
 }
-.top-menu li:active a {font-size: 26px; top: 30px; text-shadow: none;}
-.top-menu li div.menu-item {width: 100px;height: 100px;display: block;
+.top-menu li:active a {font-size: 26px; top: 30px; text-shadow: none;} /* quand on appuye sur l'icone de la balise a */
+.top-menu li div.menu-item {width: 100px;height: 100px;display: block; /* balise li et de la div:menu-tiem de notre menu d'onglets */
 -webkit-transition: all 0.2s ease;
 -moz-transition: all 0.2s ease;
 -o-transition: all 0.2s ease;
@@ -80,7 +86,7 @@ border-bottom-right-radius: 100px;
 -webkit-transform: rotate(45deg); /* position de la barre menu */
 }
 
-.top-menu li:hover div.menu-item{
+.top-menu li:hover div.menu-item{ /* balise li et de la div:menu-tiem de notre menu d'onglets quand on passe sur l'icone */
 -webkit-border-top-left-radius: 80px;
 -webkit-border-bottom-right-radius: 80px;
 -moz-border-radius-topleft: 80px;
@@ -90,7 +96,7 @@ border-bottom-right-radius: 80px;
 -webkit-transform: rotate(225deg); /* degré que l'icone bouge quand on passe la souris */
 }
 
-.top-menu li:active div.menu-item{
+.top-menu li:active div.menu-item{ /* balise li et de la div:menu-tiem de notre menu d'onglets quand on appuye sur l'icone */
 	-webkit-border-top-left-radius: 50px;
 	-webkit-border-bottom-right-radius: 50px;
 	-moz-border-radius-topleft: 50px;
@@ -100,24 +106,24 @@ border-bottom-right-radius: 80px;
 
 }
 
-table {
+table { /* propriete de la balise table */
 	width: 200px;
 	height: 100px;
-	margin: 30px auto;
+	margin: 30px auto; /* auto : pour centrer horizontallement cet élément à l'intérieur de son conteneur */
 	font-family: Comic Sans MS;
 	caption-side:top; /* positionne le titre en haut de la table */
 }
 
-a.bouton {
-  color: white;
-  background-color: #000080;
+a.bouton { /* boutons  */
+  color: white; /* couleur d'écriture */
+  background-color: #000080; /* couleur de fond du bouton */
   text-decoration: none;
   font-weight: bold;
   text-align: center;
   padding: 5px;
 }
-a.bouton:hover {
-  background-color: #6495ED;
+a.bouton:hover { /* Sélectionne et gére un lien lorsque l'on place notre souris*/
+  background-color: #6495ED; /* couleur quand on de fond du bouton */
 }
 
         
