@@ -124,5 +124,6 @@ CREATE TABLE Coup
     CONSTRAINT fk_coup_partie FOREIGN KEY(id_partie) REFERENCES Partie,
     CONSTRAINT fk_coup_joueur FOREIGN KEY(id_joueur) REFERENCES Joueur,
     CONSTRAINT fk_coup_carte1 FOREIGN KEY(carte1) REFERENCES Carte,
-    CONSTRAINT fk_coup_carte2 FOREIGN KEY(carte2) REFERENCES Carte
+    CONSTRAINT fk_coup_carte2 FOREIGN KEY(carte2) REFERENCES Carte,
+    CONSTRAINT ck_coup_carte_differentes CHECK (carte1 != carte2)
   );
