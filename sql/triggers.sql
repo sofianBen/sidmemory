@@ -29,9 +29,9 @@ BEGIN
     and partie_resultat(id_partie) != 'Egalité';
   end if;
   
-  if (vNbPartie >= 5)  then   
+  if (vNbPartie > 5)  then   
     RAISE_APPLICATION_ERROR(-20001, id_joueur_en_pseudo(:new.id_joueur) || ' a perdu 5 parties dans l''heure.');
-  elsif (vNbPartie2 >= 5 ) then
+  elsif (vNbPartie2 > 5 ) then
     RAISE_APPLICATION_ERROR(-20002, id_joueur_en_pseudo(:new.id_joueur2) || ' a perdu 5 parties dans l''heure.');
   end if;
   
@@ -199,57 +199,5 @@ declare
 begin
   insert_coup(250, 19, 146, 115, ret);
   DBMS_OUTPUT.put_line(ret);
-end;
-/
-
---------------------------------------------------------------------------------------------------------------
--- Trigger qui empeche un joueur de créer une nouvelle partie tant qu'il n'a pas terminé la partie courante
---------------------------------------------------------------------------------------------------------------
-create or replace trigger t_b_i_partie_nouvelle
-before insert on Partie
-for each row
-
-declare
-  vNbPartieEnCoursJ1 number :=0;
-  vNbPartieEnCoursJ2 number :=0;
-  
-BEGIN 
-  select count(id_partie) into vNbPartieEnCoursJ1
-  from Partie
-  where etat = 'En cours'
-  and (id_joueur = :new.id_joueur or id_joueur2 = :new.id_joueur);
-  
-  if :new.id_joueur2 is not null then -- si c'est une partie multi
-    select count(id_partie) into vNbPartieEnCoursJ2
-    from Partie
-    where etat = 'En cours'
-    and (id_joueur = :new.id_joueur2 or id_joueur2 = :new.id_joueur2);
-    
-    if (vNbPartieEnCoursJ1 != 0) and (vNbPartieEnCoursJ2 != 0) then
-      raise_application_error(-20100,'Les deux joueurs n''ont pas terminé leur partie précédente.');
-    elsif vNbPartieEnCoursJ1 != 0 then
-      raise_application_error(-20101,'Le joueur ' || id_joueur_en_pseudo(:new.id_joueur) || ' n''a pas fini sa partie précédente ' || vNbPartieEnCoursJ1);
-    elsif vNbPartieEnCoursJ2 != 0 then
-      raise_application_error(-20102,'Le joueur ' || id_joueur_en_pseudo(:new.id_joueur2) || ' n''a pas fini sa partie précédente ' || vNbPartieEnCoursJ2);
-    end if;
-  else -- solo
-    if vNbPartieEnCoursJ1 != 0 then
-      raise_application_error(-20103,'Le joueur ' || id_joueur_en_pseudo(:new.id_joueur) || ' n''a pas fini sa partie précédente');
-    end if;
-  end if;
-  
-END;
-/
-
--- test
-declare 
-  n number;
-  retour number;
-  retour2 number;
-  ret number;
-begin
-  -- terminer_partie(299, ret);
-  CREATION_PARTIE_multi(1, 26,27, n);
-  DBMS_OUTPUT.put_line(n);
 end;
 /
