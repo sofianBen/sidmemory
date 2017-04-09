@@ -168,30 +168,36 @@ BEFORE INSERT ON Coup
 FOR EACH ROW
 
 DECLARE
-  i number := 0;
+  compteurC1 number := 0;
+  compteurC2 number := 0;
   
 BEGIN 
   for cCarte in (select id_carte from Carte where id_partie = :new.id_partie) loop
-    if (cCarte.id_carte = :new.carte1) or (cCarte.id_carte = :new.carte2) then
-      i := i + 1;
+    if (cCarte.id_carte = :new.carte1) then
+      compteurC1 := 1;    
+    elsif (cCarte.id_carte = :new.carte2) then
+      compteurC2 := 1;
     end if;
   end loop;
-   
-  if i != 2 then
-    raise_application_error(-20114,'les deux cartes ne correspondent pas à la partie : ');
+    
+  if (compteurC1 != 1) and (compteurC2 != 1) then
+    raise_application_error(-20114,'les deux cartes ne correspondent pas à la partie.');
+  elsif (compteurC1 != 1) and (compteurC2 = 1) then
+    raise_application_error(-20115,'la carte ' || :new.carte1 || ' ne correspond pas à la partie.');
+  elsif (compteurC1 = 1) and (compteurC2 != 1) then
+     raise_application_error(-20116,'la carte ' || :new.carte2 || ' ne correspond pas à la partie.');
   end if;
-  
 END;
 /
 
 -- test
-declare 
-  n number;
+
+select * from carte where id_partie = 250;
+declare
+  ret number;
+  retour number;
 begin
-  CREATION_PARTIE_SOLO(1, 1, n);
-  INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) 
-  VALUES (seq_coup.NEXTVAL, n, 1,  (select max(id_carte)-1 from Carte where id_partie = (select max(id_partie) from Partie)), (select max(id_carte) from Carte where id_partie = (select max(id_partie) from Partie)));
+  insert_coup(250, 19, 146, 115, ret);
+  DBMS_OUTPUT.put_line(ret);
 end;
 /
-
-select * from coup where id_partie = (select max(id_partie) from partie);
