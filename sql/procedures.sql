@@ -40,37 +40,40 @@ create or replace procedure inscription(
     pMail in Joueur.mail%TYPE,
     pMdp in Joueur.mdp%TYPE,
     retour out number) AS
-
+    
+  
+  rId_joueur Joueur.id_joueur%type;
   e_unicite EXCEPTION;
   pragma exception_init (e_unicite, -0001);
   e_mail_ck EXCEPTION;
   pragma exception_init (e_mail_ck, -2290);
 
 BEGIN
-  insert into Joueur(id_joueur, pseudo, mail, mdp) values(seq_joueur.nextval, pPseudo, pMail, pMdp);
-  retour := 0; -- authentification réussie
+select seq_joueur.nextval into rId_joueur from dual;
+  insert into Joueur(id_joueur, pseudo, mail, mdp) values(rId_joueur, pPseudo, pMail, pMdp);
+  retour := rId_joueur; -- authentification réussie
   COMMIT;
 
 EXCEPTION
   when e_unicite then
     if sqlerrm like '%MAIL%' then
       DBMS_OUTPUT.PUT_LINE('L''adresse mail "' || pMail || '" est déjà utilisée, veulliez en choisir une autre.');
-      retour := 1;
+      retour := -1;
     elsif sqlerrm like '%PSEUDO%' then
       DBMS_OUTPUT.PUT_LINE('Le pseudo "' || pPseudo || '" est déjà utilisé.');
-      retour := 2;
+      retour := -2;
     else
       dbms_output.put_line('Erreur de clé étrangère inconnue : '|| sqlerrm); 
-      retour := 3;
+      retour := -3;
     end if;
     ROLLBACK;
   when e_mail_ck then
     dbms_output.put_line('L''adresse mail "' || pMail || '" est invalide, veuillez la corriger.');
-    retour := 4;
+    retour := -4;
     ROLLBACK;
   when others then
     dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
-    retour := -1;
+    retour := null;
     ROLLBACK;
 END;
 /
