@@ -30,10 +30,75 @@ begin
 end ;
 /
 
+--------------------------------------------------------------------------------------------------------------
+-- inscription (adresse mail check + identifiant unique) version 1
+--------------------------------------------------------------------------------------------------------------
+create or replace procedure inscription(
+    pPseudo in Joueur.pseudo%TYPE,
+    pMail in Joueur.mail%TYPE,
+    pMdp in Joueur.mdp%TYPE,
+    retour out number) AS
+    
+  
+  e_unicite EXCEPTION;
+  pragma exception_init (e_unicite, -0001);
+  e_mail_ck EXCEPTION;
+  pragma exception_init (e_mail_ck, -2290);
 
+BEGIN
+  insert into Joueur(id_joueur, pseudo, mail, mdp) values(seq_joueur.nextval, pPseudo, pMail, pMdp);
+  retour := 0; -- authentification réussie
+  COMMIT;
+
+EXCEPTION
+  when e_unicite then
+    if sqlerrm like '%MAIL%' then
+      DBMS_OUTPUT.PUT_LINE('L''adresse mail "' || pMail || '" est déjà utilisée, veulliez en choisir une autre.');
+      retour := 1;
+    elsif sqlerrm like '%PSEUDO%' then
+      DBMS_OUTPUT.PUT_LINE('Le pseudo "' || pPseudo || '" est déjà utilisé.');
+      retour := 2;
+    else
+      dbms_output.put_line('Erreur de clé étrangère inconnue : '|| sqlerrm); 
+      retour := 3;
+    end if;
+    ROLLBACK;
+  when e_mail_ck then
+    dbms_output.put_line('L''adresse mail "' || pMail || '" est invalide, veuillez la corriger.');
+    retour := 4;
+    ROLLBACK;
+  when others then
+    dbms_output.put_line('Erreur inconnue '|| sqlcode || ' : '|| sqlerrm );
+    retour := -1;
+    ROLLBACK;
+END;
+/
+
+-- test
+declare
+  retour number;
+begin
+  inscription('zouzouS', 'dvoila@gmail.com', 'mdr', retour);
+  dbms_output.put_line(retour);
+end ;
+/
+
+-- test
+declare
+  retour number;
+begin
+  inscription('zouzou', 'abc@gmail.com', 'sid', retour);
+  dbms_output.put_line(retour);
+end ;
+/
+
+select * from Joueur order by 1;
+
+
+/* 
 
 --------------------------------------------------------------------------------------------------------------
--- inscription (adresse mail check + identifiant unique)
+-- inscription (adresse mail check + identifiant unique) version 2
 --------------------------------------------------------------------------------------------------------------
 create or replace procedure inscription(
     pPseudo in Joueur.pseudo%TYPE,
@@ -98,7 +163,7 @@ end ;
 
 select * from Joueur order by 1;
 
-
+*/
 
 --------------------------------------------------------------------------------------------------------------
 -- connexion (adresse mail + mdp)
