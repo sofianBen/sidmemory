@@ -123,7 +123,7 @@ end;
 
   
   
-  -------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 -- vérifier qu'un coup a bien été produit par un joueur de la partie
 -------------------------------------------------------------------------------
 CREATE OR REPLACE TRIGGER t_b_i_coup_produit_joueur
@@ -133,26 +133,31 @@ FOR EACH ROW
 DECLARE
   vId_joueur Joueur.id_joueur%TYPE;
   vId_joueur2 Joueur.id_joueur%TYPE;
+  
 BEGIN 
   select id_joueur, id_joueur2 into vId_joueur, vId_joueur2 from Partie where id_partie = :new.id_partie;
   if vId_joueur2 is not null then 
     if vId_joueur != :new.id_joueur and vId_joueur2 != :new.id_joueur then
-      raise_application_error(-20111,'les deux joueurs ne sont pas dans la partie, ils ne peuvent pas faire de coup');
-    elsif vId_joueur != :new.id_joueur and vId_joueur2 = :new.id_joueur then
-      raise_application_error(-20112,'le joueur '||id_joueur_en_pseudo(vId_joueur)||' n''est pas dans la partie, il ne peut pas faire de coup');
-    elsif vId_joueur = :new.id_joueur and vId_joueur2 != :new.id_joueur then
-      raise_application_error(-20113,'le joueur '||id_joueur_en_pseudo(vId_joueur2)||' n''est pas dans la partie, il ne peut pas faire de coup');
+      raise_application_error(-20111,'le joueur ' ||  id_joueur_en_pseudo(:new.id_joueur) || ' n''est pas dans la partie, il ne peut pas faire de coup.');
     end if;
   else 
     if  vId_joueur != :new.id_joueur then
-      raise_application_error(-20111,'le joueur '||id_joueur_en_pseudo(vId_joueur)|| ' n''est pas dans la partie, il ne peut pas faire de coup');
+      raise_application_error(-20112,'le joueur '||id_joueur_en_pseudo(:new.id_joueur)|| ' n''est pas dans la partie, il ne peut pas faire de coup.');
     end if;
   end if;
   
 END;
 /
 
-INSERT INTO Coup(id_coup, id_partie, id_joueur, carte1, carte2) VALUES (seq_coup.NEXTVAL, 2, 1,  1, 2);
+-- test
+declare
+  ret number;
+  retour number;
+begin
+  insert_coup(250, 4, 1139, 1140, ret);
+  DBMS_OUTPUT.put_line(ret);
+end;
+/
 
 
 -------------------------------------------------------------------------------
