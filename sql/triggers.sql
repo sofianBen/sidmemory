@@ -92,19 +92,35 @@ DECLARE
   vNiveauJoueur2 number;
 
 BEGIN 
-  if :new.id_joueur2 is not null then
+  if :new.id_joueur2 is not null then -- si c'est une partie multi
     vNiveauJoueur2 := niveau_joueur(:new.id_joueur2);
-    if :new.id_niveau > vNiveauJoueur2 and :new.id_niveau > vNiveauJoueur then
+    if :new.id_niveau > vNiveauJoueur and :new.id_niveau > vNiveauJoueur2 then
       raise_application_error(-20100,'les niveaux des joueurs ne correspondent pas au niveau de la partie');
+    elsif :new.id_niveau > vNiveauJoueur then
+      raise_application_error(-20101,'le niveau du joueur ' || ID_JOUEUR_EN_PSEUDO(:new.id_joueur) || ' ne correspond pas au niveau de la partie');
+    elsif :new.id_niveau > vNiveauJoueur2 then
+      raise_application_error(-20102,'le niveau du joueur ' || ID_JOUEUR_EN_PSEUDO(:new.id_joueur2) || ' ne correspond pas au niveau de la partie');
     end if;
   else 
     if :new.id_niveau > vNiveauJoueur then
-      raise_application_error(-20101,'le niveau du joueur ne correspond pas au niveau de la partie');
+      raise_application_error(-20103,'le niveau du joueur ' || ID_JOUEUR_EN_PSEUDO(:new.id_joueur) || ' ne correspond pas au niveau de la partie');
     end if;
   end if;
   
 END;
 /
+
+declare
+ret number;
+retour number;
+begin
+
+  
+  creation_partie_multi(2,2,19,ret);
+  DBMS_OUTPUT.put_line(ret);
+end;
+/
+
   
   
   -------------------------------------------------------------------------------
