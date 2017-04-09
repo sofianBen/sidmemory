@@ -1,5 +1,5 @@
 Procédure d'installation
-
+  - dézipper le contenu du dossier 'www' dans /var/www/l3sid/
 
 
 Description des différents répertoires et fichiers
