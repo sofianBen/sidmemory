@@ -69,12 +69,14 @@ BEGIN
   
 select * from partie;
 
-update partie set etat = 'Terminé'
-where id_partie = 15;
-
-select * from coup;
-
-insert into coup(id_coup,id_partie,id_joueur,carte1,carte2) values(seq_coup.nextval,15,2,1,2);
+declare
+  ret number;
+  r number;
+begin
+  terminer_partie(231, r);
+  insert_coup(231,2,19,20,ret);
+end;
+/
 
 
 
