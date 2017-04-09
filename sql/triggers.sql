@@ -7,23 +7,25 @@ BEFORE INSERT ON Partie
 FOR EACH ROW
 
 DECLARE
-  vNbPartie number := 0;
-  vNbPartie2 number := 0;
+  vNbPartie number;
+  vNbPartie2 number;
   
 BEGIN
   select count(id_partie) INTO vNbPartie 
   from coup 
   where id_joueur = :new.id_joueur
-  and heure > current_timestamp - interval '1' HOUR
-  and partie_resultat(id_partie) != id_joueur_en_pseudo(id_joueur)
+  and heure >= current_timestamp - interval '1' HOUR
+  and partie_resultat(id_partie) != id_joueur_en_pseudo(:new.id_joueur)
   and partie_resultat(id_partie) != 'Egalité';
   
-  if (:new.id_joueur2 is not null) then -- A VERIFIER
+ -- raise_application_error(-20200, 'coucou ' || vNbPartie);
+  
+  if (:new.id_joueur2 is not null) then 
     select count(id_partie) INTO vNbPartie2
     from coup 
     where id_joueur = :new.id_joueur2
     and heure > current_timestamp - interval '1' HOUR
-    and partie_resultat(id_partie) != id_joueur_en_pseudo(id_joueur)
+    and partie_resultat(id_partie) != id_joueur_en_pseudo(:new.id_joueur2)
     and partie_resultat(id_partie) != 'Egalité';
   end if;
   
@@ -34,6 +36,16 @@ BEGIN
   end if;
   
 END;
+/
+
+-- test
+
+declare
+  retour number;
+
+begin
+  creation_partie_solo(1, 1, retour);
+end;
 /
 
 -------------------------------------------------------------------------------
