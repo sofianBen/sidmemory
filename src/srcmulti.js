@@ -26,7 +26,6 @@ var idJoueurCourant;
 	  Une fois qu'on a les deux cartes, on appelle la fonction paire*/
 
 
-
 function jouer(carte,src,nbPaireM,idpartie,idJoueur1,idJoueur2,idCarte) {
 	idpart=idpartie;
 	idj1=idJoueur1;

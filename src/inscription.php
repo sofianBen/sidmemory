@@ -3,14 +3,6 @@
 
 include("db/connect.php");
 
-$strSQL = "select * FROM joueur";
-
-$stmt = oci_parse($dbConn,$strSQL);
-if ( ! oci_execute($stmt) ){
-  $err = oci_error($stmt);
-  trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
-};
-
 if(isset($_POST['forminscription'])) {
   $pseudo = htmlspecialchars($_POST['pseudo']); /// htmlspecialchars l'utilisateur ne peut pas mettre de balise et on stocke dans la variable $pseudo le pseudo saisi
   $mail = htmlspecialchars($_POST['mail']); // idem pour le mail
@@ -18,7 +10,7 @@ if(isset($_POST['forminscription'])) {
 
   if(!empty($_POST['pseudo']) AND !empty($_POST['mail']) AND !empty($_POST['mdp']) ) {
 
-    $reqpseudo = oci_parse($dbConn, 'begin inscription(:ps, :mail, :mdp, :r); end;');// requête SQL pour utiliser la procédure de l'inscription qui nous permet de créer un nouveau joueur ou d'afficher un message d'erreur si problème dans les données saisies par le joueur
+    $reqpseudo = oci_parse($dbConn, 'begin "21602883".inscription(:ps, :mail, :mdp, :r); end;');// requête SQL pour utiliser la procédure de l'inscription qui nous permet de créer un nouveau joueur ou d'afficher un message d'erreur si problème dans les données saisies par le joueur
     oci_bind_by_name($reqpseudo, ':ps', $pseudo,50);
     oci_bind_by_name($reqpseudo, ':mail', $mail,50);
     oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
@@ -73,7 +65,7 @@ if(isset($_POST['forminscription'])) {
       <form method="POST" action=""> <!-- formulaire d'inscription -->
         <table>
           <tr>
-            <td align="right">
+            <td id="pseud">
               <label for="pseudo">Pseudo :</label>
             </td>
             <td>
@@ -81,7 +73,7 @@ if(isset($_POST['forminscription'])) {
             </td>
           </tr>
           <tr>
-            <td align="right">
+            <td id="adressmail">
               <label for="mail">Mail :</label>
             </td>
             <td>
@@ -89,7 +81,7 @@ if(isset($_POST['forminscription'])) {
             </td>
           </tr>
           <tr>
-            <td align="right">
+            <td>
               <label for="mdp">Mot de passe :</label>
             </td>
             <td>
@@ -97,9 +89,9 @@ if(isset($_POST['forminscription'])) {
             </td>
           </tr>
           <tr>
-            <td align="center">
+            <td>
               <br />
-              <input type="submit" name="forminscription" value="Je m'inscris" /> <!-- bouton pour valider son formulaire-->
+              <input type="submit" id="valide" name="forminscription" value="Je m'inscris" /> <!-- bouton pour valider son formulaire-->
             </td>
           </tr>
         </table>

@@ -4,17 +4,6 @@
 session_start();
 include("db/connect.php");
 
-
-$strSQL = "select * FROM joueur";
-
-$stmt = oci_parse($dbConn,$strSQL);
-if ( ! oci_execute($stmt) ){
-	$err = oci_error($stmt);
-	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
-};
-
-
-
 ?>
 
 <html>
@@ -50,7 +39,7 @@ if ( ! oci_execute($stmt) ){
 						<select name="choix">
 							<?php
 							// requête SQL pour récupérer tout les id_partie que le joueur a joué
-							$choixpartie = oci_parse($dbConn,'SELECT id_partie FROM Partie WHERE id_joueur=:idj order by id_partie asc');
+							$choixpartie = oci_parse($dbConn,'SELECT id_partie FROM "21602883".Partie WHERE id_joueur=:idj order by id_partie asc');
 							oci_bind_by_name($choixpartie, ':idj', $_SESSION['id'],5);
 							oci_execute($choixpartie);
 							while(oci_fetch($choixpartie)){

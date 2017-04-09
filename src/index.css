@@ -12,6 +12,15 @@ body { /* sur le corps du texte */
 	background-color: #B9121B; /* coulour de fond  */
 }
 
+#formu { text-align: right;}
+#pseud{ text-align: right;}
+#adressmail{ text-align: right;}
+
+#valide{ /* div base */
+	position: relative; /* coulour de fond en blanc */
+	left: 120%;
+}
+
 #base{ /* div base */
 	background-color: white; /* coulour de fond en blanc */
 	padding: 1em;

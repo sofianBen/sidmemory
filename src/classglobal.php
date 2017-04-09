@@ -4,16 +4,6 @@
 session_start();
 include("db/connect.php");
 
-
-$strSQL = "select * FROM joueur";
-
-$stmt = oci_parse($dbConn,$strSQL);
-if ( ! oci_execute($stmt) ){
-	$err = oci_error($stmt);
-	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
-};
-
-
 ?>
 
 <html>
@@ -65,7 +55,7 @@ if ( ! oci_execute($stmt) ){
 
 				<?php
 				$niveau= $_POST['choix']; // on récupère le choix du niveau que le joueur a fait dans la liste déroulante 
-				$classgloba = oci_parse($dbConn,'SELECT pseudo,nb_coup,duree FROM vue_highscore_global WHERE id_niveau=:niv and rownum <= 10 order by rownum'); // On récupère nos pseudo, nombre de coup et duree de notre vue pour le classement global à travers une requête SQL
+				$classgloba = oci_parse($dbConn,'SELECT pseudo,nb_coup,duree FROM "21602883".vue_highscore_global WHERE id_niveau=:niv and rownum <= 10 order by rownum'); // On récupère nos pseudo, nombre de coup et duree de notre vue pour le classement global à travers une requête SQL
 				oci_bind_by_name($classgloba, ':niv', $niveau,5);
 				oci_execute($classgloba);
 				while(oci_fetch($classgloba)){ // Pour chaque ligne de notre requête on:

@@ -5,13 +5,6 @@ session_start();
 
 include("db/connect.php");
 
-$strSQL = "select * FROM joueur";
-
-$stmt = oci_parse($dbConn,$strSQL);
-if ( ! oci_execute($stmt) ){
-$err = oci_error($stmt);
-trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
-};
 
 ?>
 
@@ -40,8 +33,6 @@ trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
           </ul>
         </nav>
       </div>
-      </br>
-      </br>
       <p>
       	<a href="grillemono.php" class="bouton">Partie Mono-joueur </a> <!-- bouton pour rediriger vers la partie mono-joueur(grillemono.php) -->
       </p>

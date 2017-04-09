@@ -3,14 +3,6 @@
 session_start();
 include("db/connect.php");
 
-$strSQL = "select * from Joueur ";
-
-$stmt = oci_parse($dbConn,$strSQL);
-if ( ! oci_execute($stmt) ){
-	$err = oci_error($stmt);
-	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
-};
-
 if(isset($_POST['forminscription'])) {
 
 	$mail = htmlspecialchars($_POST['mail']); // htmlspecialchars l'utilisateur ne peut pas mettre de balise et on stocke dans la variable $mail le mail saisi
@@ -21,7 +13,7 @@ if(isset($_POST['forminscription'])) {
     $mail =$_POST['mail'];
     $mdp = $_POST['mdp']; 
 
-    $reqpseudo = oci_parse($dbConn, 'begin connexion(:mail, :mdp, :r); end;'); // requête SQL pour utiliser la procédure de la connexion qui nous permet de se connecter ou d'afficher un message d'erreur si problème dans les données saisies par le joueur
+    $reqpseudo = oci_parse($dbConn, 'begin "21602883".connexion(:mail, :mdp, :r); end;'); // requête SQL pour utiliser la procédure de la connexion qui nous permet de se connecter ou d'afficher un message d'erreur si problème dans les données saisies par le joueur
     oci_bind_by_name($reqpseudo, ':mail', $mail,50);
     oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
     oci_bind_by_name($reqpseudo, ':r', $r, 10);
@@ -29,7 +21,7 @@ if(isset($_POST['forminscription'])) {
     oci_free_statement($reqpseudo);
 
     if($r == 0) { // si la procédure connexion à renvoyer un retour=0 alors le joueur peut se connecter
-      $id =  oci_parse($dbConn,'select id_joueur from Joueur where mail = :mail'); // requête SQL pour récupérer l'id du joueur car il se connecte avec son mail
+      $id =  oci_parse($dbConn,'select id_joueur from "21602883".Joueur where mail = :mail'); // requête SQL pour récupérer l'id du joueur car il se connecte avec son mail
 		  oci_bind_by_name($id, ':mail', $_POST['mail'],50);
 		  oci_execute($id);
 		  while(oci_fetch($id)){
@@ -76,12 +68,12 @@ if(isset($_POST['forminscription'])) {
       </div>
 
       <h2>Connexion</h2>
-      <br /><br />
+      
 
       <form method="POST" action=""> <!-- formulaire de connexion -->
         <table>
           <tr>
-            <td align="right">
+            <td id="formu">
               <label for="mail">Mail :</label>
             </td>
             <td>
@@ -89,7 +81,7 @@ if(isset($_POST['forminscription'])) {
             </td>
           </tr>
           <tr>
-            <td align="right">
+            <td>
               <label for="mdp">Mot de passe :</label>
             </td>
             <td>
@@ -97,9 +89,9 @@ if(isset($_POST['forminscription'])) {
             </td>
           </tr>
           <tr>
-            <td align="center">
+            <td>
               <br />
-              <input type="submit" name="forminscription" value="Se connecter" /> <!-- bouton pour valider son formulaire-->
+              <input type="submit" id="valide" name="forminscription" value="Se connecter" /> <!-- bouton pour valider son formulaire-->
             </td>
           </tr>
         </table>

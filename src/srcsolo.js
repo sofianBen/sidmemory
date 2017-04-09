@@ -1,3 +1,4 @@
+//Déclaration des variables globales
 var nbCarte=0;
 var carte1;
 var carte2;	
@@ -6,7 +7,12 @@ var nbPaireMax=0 ;
 var nbPaire=0;
 var idpart;
 var idj1;
-	
+var tempsRestant; //	
+var chrono; //
+var finTemps; //
+var debutP;	///
+var chronoFin = 0;
+
 /*Entré : carte : récupère la carte sur laquelle l'utilisateur vient de cliquer
 	  src : Url de l'image que contient la carte choisie
 	  nbPaireM : le nombre de paire présente dans la partie
@@ -21,7 +27,35 @@ var idj1;
 function jouer(carte,src,nbPairesM,idPartie,idJoueur,idCarte) {
 	idpart=idPartie;
 	idj1=idJoueur;
-	nbPaireMax=nbPairesM;
+	nbPaireMax=nbPairesM; 
+	if (nbCoups ==0) {
+		//création de la variable finTemps permettant d'avoir le temps de fin de partie (temps actuel + 1min)
+		debutP = new Date().getTime();		
+		finTemps = debutP + 1*60*1000;
+	}
+	//Mise en place d'un chronomètre d'une minutes qui s'actualise toutes les secondes
+	chrono = setInterval(function() {
+		var now;
+		var minutes;
+		var secondes;
+		//la variable now prend le temps acutel
+		now = new Date().getTime();
+		//Calcul du temps qu'il nous reste à jouer
+		tempsRestant = finTemps - now;
+		//Cacul des minutes restantes à jouer
+		minutes = Math.floor((tempsRestant % (1000 * 60 * 60)) / (1000 * 60));
+		//Calcul des secondes restants à jouer
+		secondes = Math.floor((tempsRestant % (1000 * 60)) / 1000);
+		// Affiche du chronomètre sous la forme XXmXXs
+ 		document.getElementById("chrono").innerHTML = minutes + "m " + secondes + "s ";
+		// Si le temps de jeu de la partie est écoulé on affiche un message prévenant le joueur que la partie est terminé et on lance la fonction finParti
+  		if (tempsRestant <= 0) {
+    			clearInterval(chrono);
+			chronoFin = 1;
+			finParti(nbPaire,idPartie,chronoFin)
+    			document.getElementById("chrono").innerHTML = "Le chronomètre est écoulé vous avez perdu la partie";
+  		}
+	},1000);
 	nbCarte ++;
 	if(nbCarte == 1 ){
 		carte1 = document.getElementById(carte.id);
@@ -34,7 +68,7 @@ function jouer(carte,src,nbPairesM,idPartie,idJoueur,idCarte) {
 		//Assignation de l'image à l'objet carte --> retourne la carte (visualisation de l'image)
 		carte2.src = src;
 		id_carte2=idCarte;
-// fonction window.setTimeout permet d'attendre un certain temps avant de déclancher la fonction paire --> permet au joueur de visualiser les deux cartes
+		// fonction window.setTimeout permet d'attendre un certain temps avant de déclancher la fonction paire --> permet au joueur de visualiser les deux cartes
 		window.setTimeout("paire()",1000);
 	}
 	else{
@@ -42,6 +76,7 @@ function jouer(carte,src,nbPairesM,idPartie,idJoueur,idCarte) {
 		nbCarte=nbCarte-1;
 	}
 }
+
 	
 // Permet de déterminer si la paire de carte choisi par l'utilisateur forme une paire ou non
 function paire(){
@@ -57,7 +92,7 @@ function paire(){
 		carte2.alt = "Paire Trouvée";
 		nbPaire+= 1; 
 		// On regarde s'il reste des paires à trouver
-		finParti(nbPaire,idpart);
+		finParti(nbPaire,idpart,chronoFin);
 	}
 	else{
 		carte1.src = "face_cache.jpg";
@@ -72,11 +107,15 @@ function paire(){
 idPartie : identifiant de la partie en cours
 Corps  : Regarde si toutes les paires ont été joué
 Si oui affiche un message contenant le score de la partie et si joueur a gagné */
-function finParti(nbPaireJouee,idPartie){
-	if (nbPaireJouee == nbPaireMax) {
+function finParti(nbPaireJouee,idPartie,chronoFini){
+	if (nbPaireJouee == nbPaireMax){ 
 		termineparti(idPartie);
 		alert("La partie est fini, vous avez gagné");
-	} 
+	}
+	if (chronoFini == 1){
+		termineparti(idPartie);
+	}
+	 
 }
 
 /*Entrée : 

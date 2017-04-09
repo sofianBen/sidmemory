@@ -4,16 +4,6 @@
 session_start();
 include("db/connect.php");
 
-
-$strSQL = "select * FROM joueur";
-
-$stmt = oci_parse($dbConn,$strSQL);
-if ( ! oci_execute($stmt) ){
-	$err = oci_error($stmt);
-	trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
-};
-
-
 ?>
 
 <html>
@@ -65,7 +55,7 @@ if ( ! oci_execute($stmt) ){
 
 				<?php
 				$niveau= $_POST['choix']; // on récupère le choix du niveau que le joueur a fait dans la liste déroulante 
-				$classemai = oci_parse($dbConn,'SELECT pseudo,nb_coup,duree FROM vue_highscore_semaine WHERE id_niveau=:niv and rownum <= 10 order by rownum'); // On récupère nos pseudo, nombre de coup et duree de notre vue pour le classement de la semaine à travers une requête SQL
+				$classemai = oci_parse($dbConn,'SELECT pseudo,nb_coup,duree FROM "21602883".vue_highscore_semaine WHERE id_niveau=:niv and rownum <= 10 order by rownum'); // On récupère nos pseudo, nombre de coup et duree de notre vue pour le classement de la semaine à travers une requête SQL
 				oci_bind_by_name($classemai, ':niv', $niveau,5); 
 				oci_execute($classemai);
 				while(oci_fetch($classemai)){ // Pour chaque ligne de notre requête on:

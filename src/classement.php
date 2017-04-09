@@ -4,14 +4,6 @@
 session_start();
 include("db/connect.php");
 
-$strSQL = "select * FROM joueur";
-
-$stmt = oci_parse($dbConn,$strSQL);
-if ( ! oci_execute($stmt) ){
-$err = oci_error($stmt);
-trigger_error('Query failed: ' . $err['message'], E_USER_ERROR);
-};
-
 ?>
 
 <html>
