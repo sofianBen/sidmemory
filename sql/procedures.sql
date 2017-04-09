@@ -302,6 +302,7 @@ end ;
 /
 
 
+set SERVEROUTPUT ON;
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 1 joueur
 --------------------------------------------------------------------------------------------------------------
@@ -314,7 +315,9 @@ create or replace procedure creation_partie_solo(
   nbCarte number := 0;
   vMinId_image Image.id_image%TYPE;
   vNb_ligne Niveau.nb_ligne%TYPE;
-  vNb_colonne Niveau.nb_colonne%TYPE;
+  vNb_colonne Niveau.nb_colonne%TYPE;  
+  
+  retour number;
 
   type typ_tab is table of number INDEX BY BINARY_INTEGER; -- déclaration d'un type 'tableau' de nombres aléatoires
   tabId_image typ_tab; -- déclaration du tableau d'image piochées aléatoirement
@@ -331,10 +334,20 @@ create or replace procedure creation_partie_solo(
   pragma exception_init ( fkInexistante , -2291) ;
 
 BEGIN
+
+  -- Terminer toutes les parties 'en cours' du joueur 
+  for cPartie in (select id_partie
+      from Partie 
+      where etat = 'En cours'
+      and (id_joueur = pId_joueur or id_joueur2 = pId_joueur)) loop
+    terminer_partie(cPartie.id_partie, retour);
+  end loop;
+
+
   select seq_partie.nextval into rId_partie from dual; -- insère dans la variable rId_partie la valeur de l'Id de la partie qu'on veut créer
   insert into Partie(id_partie, id_niveau, id_joueur) values(rId_partie, pId_niveau, pId_joueur);
   -- après l'insert dans la table Partie, le trigger verification_defaites va être lancé tout seul
-
+  
   -- select pour avoir les nombres de lignes et les nombres de colonnes
   select nb_ligne, nb_colonne into vNb_ligne, vNb_colonne from Niveau where id_niveau = pId_niveau;
 
@@ -376,7 +389,7 @@ BEGIN
       -- insérer dans la table Carte les cartes que l'on vient de créer
       insert into Carte values (seq_carte.nextval, ligne, colonne, tab_carte(tab_emplacement(i)), rId_partie);
       -- stocker la variable de retour à la place de mettre sql_partie.currval
-      i := i + 1 ;
+      i := i + 1;
     end loop;
   end loop;
 
@@ -410,6 +423,7 @@ begin
   DBMS_OUTPUT.PUT_LINE('id_partie : ' || ret);
 end;
 /
+select * from partie where id_joueur = 2 or id_joueur2 = 2;
 
 --------------------------------------------------------------------------------------------------------------
 -- creationPartie pour 2 joueurs
@@ -425,6 +439,8 @@ create or replace procedure creation_partie_multi(
   vMinId_image Image.id_image%TYPE;
   vNb_ligne Niveau.nb_ligne%TYPE;
   vNb_colonne Niveau.nb_colonne%TYPE;
+  
+  retour number;
 
   type typ_tab is table of number INDEX BY BINARY_INTEGER; -- déclaration d'un type 'tableau' de nombres aléatoires
   tabId_image typ_tab; -- déclaration du tableau d'image piochées aléatoirement
@@ -441,6 +457,16 @@ create or replace procedure creation_partie_multi(
   pragma exception_init ( fkInexistante , -2291) ;
 
 BEGIN
+  -- Terminer les parties 'en cours' des deux joueurs
+  for cPartie in (select id_partie
+      from Partie 
+      where etat = 'En cours'
+      and (id_joueur = pId_joueur or id_joueur2 = pId_joueur)
+      or (id_joueur = pId_joueur2 or id_joueur2 = pId_joueur2)) loop
+    terminer_partie(cPartie.id_partie, retour);
+  end loop;
+  
+  
   select seq_partie.nextval into rId_partie from dual; -- insère dans la variable rId_partie la valeur de l'Id de la partie qu'on veut créer
   insert into Partie(id_partie, id_niveau, id_joueur, id_joueur2) values(rId_partie, pId_niveau, pId_joueur, pId_joueur2);
   -- après l'insert dans la table Partie, le trigger verification_defaites va être lancé tout seul
@@ -476,8 +502,6 @@ BEGIN
   for lecture in 1..2 loop -- pour lire 2 fois le tableau tabId_image afin de mettre les paires dans les emplacements
     for image in tabId_image.first..tabId_image.last loop
       tab_carte(i) := tabId_image(image);
-      --DBMS_OUTPUT.PUT_LINE(tab_carte(i));
-      --DBMS_OUTPUT.PUT_LINE(tab_emplacement(i)); -- dans la table carte à un emplacement aléatoire on place l'image
       i := i + 1; -- on passe à l'emplacement aléatoire suivant
     End loop;
   End loop;
@@ -485,7 +509,6 @@ BEGIN
   i := 1;
   for ligne in 1..vNb_ligne loop
     for colonne in 1..vNb_colonne loop
-      --DBMS_OUTPUT.PUT_LINE(i || ' - ' || ligne || ' - ' || colonne || ' - ' || tab_carte(tab_emplacement(i)));
       insert into Carte values (seq_carte.nextval, ligne, colonne, tab_carte(tab_emplacement(i)), rId_partie); -- stocker la variable de retour à la place de mettre sql_partie.currval
       i := i + 1 ;
     end loop;
@@ -517,10 +540,12 @@ END;
 declare
   ret number;
 begin
-  creation_partie_multi(50, 1, 2, ret);
+  creation_partie_multi(1, 4, 1, ret);
   DBMS_OUTPUT.PUT_LINE('id_partie : ' || ret);
 end;
 /
+
+select * from partie where id_joueur = 1 or id_joueur2 = 1;
 
 select niveau_joueur(1) from dual;
 
