@@ -4,7 +4,7 @@ Procédure d'installation
 
 Description des différents répertoires et fichiers
 
-Le fichier SQL contient tout le code développer durant le projet pour la partie SQL avec : 
+Le dossier SQL contient tout le code développer durant le projet pour la partie SQL avec : 
   - creation.sql	
   - grant.sql
   - insertion.sq
@@ -14,5 +14,32 @@ Le fichier SQL contient tout le code développer durant le projet pour la partie
   
 Le fichier www contient tout le code qui doit se trouver sur le serveur web. Il est composé des fichier suivants :
   - collections (contient toutes les collections d'image utilisées)
-  - db (fichier de connection à la BD)
+  - db (contient le fichier de connection à la BD)
   - d
+  
+PaireTrouvee.png	
+ajoutcoup.php
+classemaine.php
+classement.php
+classglobal.php
+classjour.php
+connexion.php
+deconnexion.php
+face_cache.jpg
+grillemono.php
+grillemulti.php
+historevoir.php
+historevoirbis.php
+historique.php
+index.css	modif
+index.php
+inscription.php
+jouer.php
+memory.jpg
+multi.php
+multigame.php
+regles.php
+sologame.php
+srcmulti.js
+srcsolo.js
+termiparti.php
