@@ -30,6 +30,9 @@ if(isset($_POST['forminscription'])) {
     else if($r == 2){ // si la procédure connexion à renvoyer un retour=2 alors le joueur a mal écrit son mail
      $erreur = " L'adresse mail est invalide, veuillez la corriger";
     }
+     else if($r == 4){ //si la procédure inscription renvoie 4 c'est que l'adresse mail n'est pas valide
+      $erreur = " L'adresse mail n'est pas valide, veuillez la réécrire";
+    }
     else{ // si la procédure connexion à renvoyer un retour différent de 0,1 et 2 alors on affiche qu'il s'agit d'une erreur inconnu 
      $erreur = " Erreur ! ";
     }
