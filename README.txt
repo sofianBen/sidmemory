@@ -1,4 +1,4 @@
-Procédure d'installation
+Procédure d'installation :
   - dézipper le contenu du dossier 'www' dans /var/www/l3sid/
 
 
