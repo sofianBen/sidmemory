@@ -12,7 +12,8 @@ if(isset($_POST['forminscription'])) {
     $pseudo=$_POST['pseudo'];
     $mail = $_POST['mail'];
     $mdp = $_POST['mdp'];
-    $reqpseudo = oci_parse($dbConn, 'begin "21602883".inscription(:ps, :mail, :mdp, :r); end;');// requête SQL pour utiliser la procédure de l'inscription qui nous permet de créer un nouveau joueur ou d'afficher un message d'erreur si problème dans les données saisies par le joueur
+   // Utilisation de la procedure SQL inscription pour créer un joueur si la procédure n'arrive pas à créer un nouveau joueur à cause des données saisies un message d'erreur est affiché
+    $reqpseudo = oci_parse($dbConn, 'begin "21602883".inscription(:ps, :mail, :mdp, :r); end;');
     oci_bind_by_name($reqpseudo, ':ps', $pseudo,50);
     oci_bind_by_name($reqpseudo, ':mail', $mail,50);
     oci_bind_by_name($reqpseudo, ':mdp', $mdp,50);
@@ -54,6 +55,7 @@ if(isset($_POST['forminscription'])) {
       <h1 class = "centrer"> Memory </h1>
       <div id= "menu">
         <nav>
+	
           <ul class="top-menu"> <!-- code du menu avec deux onglets: inscription et connexion-->
             <li><a href="inscription.php">S'inscrire</a><div class="menu-item" id="item5"></div></li>
             <li><a href="connexion.php">Se connecter</a><div class="menu-item" id="item6"></div></li>
@@ -62,7 +64,7 @@ if(isset($_POST['forminscription'])) {
       </div>
 
       <h2>Inscription</h2>
-      <br /><br />
+      <br />
 
       <form method="POST" action=""> <!-- formulaire d'inscription -->
         <table>
@@ -93,12 +95,13 @@ if(isset($_POST['forminscription'])) {
           <tr>
             <td>
               <br />
-              <input type="submit" id="valide" name="forminscription" value="Je m'inscris" /> <!-- bouton pour valider son formulaire-->
+	      <!-- bouton pour valider son formulaire-->
+              <input type="submit" id="valide" name="forminscription" value="Je m'inscris" /> 
             </td>
           </tr>
         </table>
       </form>
-<!-- Affichage le message d'erreur-->
+      <!-- Affichage le message d'erreur-->
       <?php
       if(isset($erreur)) {
         echo $erreur;

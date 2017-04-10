@@ -7,10 +7,10 @@ var nbPaireMax=0 ;
 var nbPaire=0;
 var idpart;
 var idj1;
-var tempsRestant; //	
-var chrono; //
-var finTemps; //
-var debutP;	///
+var tempsRestant;	
+var chrono;
+var finTemps;
+var debutP;
 var chronoFin = 0;
 
 /*Entré : carte : récupère la carte sur laquelle l'utilisateur vient de cliquer
