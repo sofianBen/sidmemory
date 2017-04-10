@@ -22,7 +22,7 @@ INSERT INTO Categorie VALUES (10, 'elite', 450, 99999);
 CREATE SEQUENCE seq_joueur;
 INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'coucou','abc@gmail.com','sid',0,1); --joueur débutant
 INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'bibi','bibi@gmail.com','ok',110,3); --joueur intermédiaire
-INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'test','test@gmail.com','test',9999,50); --joueur élite (pour l'oral)
+INSERT INTO Joueur VALUES (seq_joueur.NEXTVAL,'test','test@gmail.com','test',9999,10); --joueur élite (pour l'oral)
 
 
 -- Insert Collection
