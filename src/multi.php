@@ -27,7 +27,7 @@ if(isset($_POST['forminscription'])) {
       while(oci_fetch($idj2)){
         $idjoueur2 = oci_result($idj2,1);
       }
-      if ($idjoueur2 !=$_SESSION['id']){
+      if ($idjoueur2 !=$_SESSION['id']){ // pour ne pas pouvoir se connecté sur le même compte
       $_SESSION['id2'] = $idjoueur2;
 // on stocke dans la mémoire de la session l'id du joueur2 qui est connecté
       header("Location: grillemulti.php"); // permet de rediriger le joueur sur la grille de niveau pour jouer une partie multi
