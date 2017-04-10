@@ -31,7 +31,7 @@ grillemulti.php
 historevoir.php
 historevoirbis.php
 historique.php
-index.css	modif
+index.css
 index.php
 inscription.php
 jouer.php
