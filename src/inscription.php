@@ -9,7 +9,10 @@ if(isset($_POST['forminscription'])) {
   $mdp = sha1($_POST['mdp']); // shail permet de sécuriser le mdp, on stocke dans la variable $mdp le mot de passe saisi
 
   if(!empty($_POST['pseudo']) AND !empty($_POST['mail']) AND !empty($_POST['mdp']) ) {
-
+	$pseudo = $_POST['pseudo'];
+  	$mail = $_POST['mail'];
+  	$mdp = $_POST['mdp'];
+  	
     $reqpseudo = oci_parse($dbConn, 'begin "21602883".inscription(:ps, :mail, :mdp, :r); end;');// requête SQL pour utiliser la procédure de l'inscription qui nous permet de créer un nouveau joueur ou d'afficher un message d'erreur si problème dans les données saisies par le joueur
     oci_bind_by_name($reqpseudo, ':ps', $pseudo,50);
     oci_bind_by_name($reqpseudo, ':mail', $mail,50);
@@ -27,8 +30,14 @@ if(isset($_POST['forminscription'])) {
     else if($r == 2){ // si la procédure connexion à renvoyer un retour=2 alors le joueur a mal écrit son mail
      $erreur = " L'adresse mail est invalide, veuillez la corriger";
     }
-    else{ // si la procédure connexion à renvoyer un retour différent de 0,1 et 2 alors on affiche qu'il s'agit d'une erreur inconnu 
-     $erreur = " Erreur ! ";
+    else if($r == 3){ // si la procédure connexion à renvoyer un retour=3 alors erreur de clé étrangère inconnue
+     $erreur = " Erreur de clé étrangère inconnue";
+    }
+    lse if($r == 4){ // si la procédure connexion à renvoyer un retour=3 alors l'adresse mail écrit est invalide
+     $erreur = " L''adresse mail est invalide, veuillez la corriger";
+    }
+    else{ // si la procédure connexion à renvoyer un retour différent de 0,1 et 2 alors on affiche qu'il s'agit d'une erreur inconnue
+     $erreur = " Erreur inconnue! ";
     }
   } 
   else{ // si tout les champs n'ont pas été remplis alors message d'erreur qui s'affiche 
